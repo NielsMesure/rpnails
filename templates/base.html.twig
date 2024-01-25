@@ -17,33 +17,67 @@
 
 
 <body>
-<div class="container">
-    <header class="d-flex flex-wrap align-items-center justify-content-center justify-content-md-between py-3 mb-4 border-bottom">
-        <div class="col-md-3 mb-2 mb-md-0">
-            <a href="/" class="d-inline-flex link-body-emphasis text-decoration-none" >
-                <img src="/uploads/logo/logo_Rox.png" alt="logo entreprise" width="30%" >
-            </a>
-        </div>
 
-        <ul class="nav col-12 col-md-auto mb-2 justify-content-center mb-md-0">
-            <li><a href="#" class="nav-link px-2 link-secondary">Prestations</a></li>
-            <li><a href="#" class="nav-link px-2">Réserver un Créneaux</a></li>
-            <li><a href="#" class="nav-link px-2">Par rapport à moi</a></li>
-        </ul>
+    <header >
+        <nav class="navbar navbar-expand-lg navbar-dark custom-font shadow">
+            <div class="container">
+                <a class="navbar-brand " href="{{ path('app_home') }}">
+                    <img src="/uploads/logo/logo_Rox.png" alt="LOGO" width="130px" class="px-2 py-1">
+                </a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+                        aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse navbar-custom" id="navbarSupportedContent">
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                        <li class="nav-item">
+                            <a class="nav-link" aria-current="page" href="#">Prestation</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" aria-current="page" href="#">Réserver</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" aria-current="page" href="#">A propos de mon travail</a>
+                        </li>
 
-        <div class="col-md-3 text-end">
-            <button type="button" class="btn btn-outline-primary me-2">Login</button>
-            <a href="{{ path('app_register') }}">
-                <button type="button" class="btn btn-primary">Sign-up</button>
-            </a>
+                        {% if is_granted("ROLE_ADMIN") %}
+                            <li class="nav-item">
+                                <a class="nav-link" aria-current="page" href="#">Interface Admin</a>
+                            </li>
+                        {% endif %}
+                    </ul>
 
-        </div>
+                    <form  role="search">
+                        <div class="nav_bar_button mb-2">
+                            {% if app.user %}
+                                <div class="dropdown ">
+                                    <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                        Mon Compte
+                                    </button>
+                                    <ul class="dropdown-menu">
+                                        <li><a class="dropdown-item" href="{{ path('app_account_password') }}">Mes Informations</a></li>
+                                        <li><a class="dropdown-item" href="#">Mes Réservations</a></li>
+                                        <li><a class="dropdown-item custom-logout" href="{{ path('app_logout') }}">Déconnexion</a></li>
+                                    </ul>
+                                </div>
+
+                            {% else %}
+                                <a class="btn custom-submit" style="width: auto"
+                                   href="{{ path('app_login') }}">Connexion</a> <a class="btn custom-submit"
+                                                                                   style="width: auto"
+                                                                                   href="{{ path('app_register') }}">Inscription</a>
+                            {% endif %}
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </nav>
     </header>
 
-</div>
 
 <main role="main">
-<div class="container-fluid mb-5 mt-5">
+<div class=" container mb-5 mt-5">
         {% block content %}
         {% endblock %}
 </div>

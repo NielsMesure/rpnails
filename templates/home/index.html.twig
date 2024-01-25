@@ -2,6 +2,49 @@
 {% block title %}test{% endblock %}
 
 {% block content %}
-    <h1>Bonjour</h1>
-    Je suis Roxana et je vais avoir un site Web
+    <!-- Gallery -->
+    <div class="row flex-row justify-content-center">
+        <div class="col-lg-4 col-md-6 mb-4 mb-lg-0 custom-img-width">
+            <img
+                    src="{{ asset('uploads/img/ongles_vert.jpg') }}"
+                    class="w-100 shadow-1-strong rounded mb-4"
+                    alt="ongles verts  paillettes"
+            />
+
+            <img
+                    src="{{ asset('uploads/img/nails_clairs.jpg') }}"
+                    class="w-100 shadow-1-strong rounded mb-4"
+                    alt="french paillette rose"
+            />
+        </div>
+
+        <div class="col-lg-4 col-md-6 mb-lg-0 custom-img-width">
+            <img
+                    src="{{ asset('uploads/img/babyboomer.jpg') }}"
+                    class="w-100 shadow-1-strong rounded mb-4 "
+                    alt="ongles babyboomer"
+            />
+
+            <img
+                    src="{{ asset('uploads/img/ongles_amande.jpg') }}"
+                    class="w-100 shadow-1-strong rounded mb-4 "
+                    alt="pose gel amande"
+            />
+        </div>
+
+        <div class="col-lg-4 col-md-6 mb-lg-0 custom-img-width" >
+            <img
+                    src="{{ asset('uploads/img/french.jpg') }}"
+                    class="w-100 shadow-1-strong rounded mb-4 "
+                    alt="french"
+            />
+
+            <img
+                    src="{{ asset('uploads/img/french_paillette1.jpg') }}"
+                    class="w-100 shadow-1-strong rounded mb-4"
+                    alt="ongles french paillette rose"
+            />
+        </div>
+    </div>
+    <!-- Gallery -->
 {% endblock %}
