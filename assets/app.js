@@ -9,7 +9,7 @@ import timeGridPlugin from '@fullcalendar/timegrid'
 document.addEventListener('DOMContentLoaded', function() {
     var calendarEl = document.getElementById('calendar');
 
-    fetch('/api/get-business-hours')
+    fetch('/admin/api/get-business-hours')
         .then(response => response.json())
         .then(function(businessHoursData) {
     var calendar = new Calendar(calendarEl, {
@@ -24,7 +24,7 @@ document.addEventListener('DOMContentLoaded', function() {
             center: 'title',
             left: 'dayGridMonth,timeGridWeek,timeGridDay' // user can switch between the two
         },
-        businessHours: fetch('api/get-business-hours')
+        businessHours: fetch('/admin/api/get-business-hours')
             .then(response => response.json())
             .then(function(businessHours) {
                 calendar.setOption('businessHours', businessHours);

@@ -41,23 +41,22 @@ class AvailabilityController extends AbstractController
         return new JsonResponse(['status' => 'success']);
     }
 
-    #[Route('/api/get-business-hours', name: 'api_get_business_hours')]
+    #[Route('/admin/api/get-business-hours', name: 'api_get_business_hours')]
     public function getBusinessHours(EntityManagerInterface $entityManager, SerializerInterface $serializer): JsonResponse {
         $businessHoursRepo = $entityManager->getRepository(BusinessHours::class);
         $businessHoursEntities = $businessHoursRepo->findAll();
-        if (empty($businessHoursEntities)) {
-            $this->get('logger')->info('Aucune entrée BusinessHours trouvée');
-        }
+
 
         $formattedBusinessHours = [];
         foreach ($businessHoursEntities as $entity) {
-
+            if (!$entity->isIsActive()) {
                 $dayNumeric = $this->convertDayToNumeric($entity->getDay()); // Implémentez cette fonction selon votre besoin
                 $formattedBusinessHours[] = [
                     'daysOfWeek' => [$dayNumeric],
-                    'startTime'  => $entity->getStartTime()->format('H:i'),
-                    'endTime'    => $entity->getEndTime()->format('H:i'),
+                    'startTime' => $entity->getStartTime()->format('H:i'),
+                    'endTime' => $entity->getEndTime()->format('H:i'),
                 ];
+            }
 
         }
 

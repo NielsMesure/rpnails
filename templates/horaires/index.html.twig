@@ -19,23 +19,10 @@
     </script>
 
     <style>
-        .day-schedule {
-            margin-bottom: 1rem;
-            padding: 1rem;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-        }
 
-        .hours select:disabled {
-            background-color: #e9ecef;
-            color: #6c757d;
-        }
-
-        .hours select {
-            margin: 0 0.5rem;
-        }
     </style>
 
+        <div class="container custom-availability-container">
 
         <form id="businessHoursForm" method="post" action="{{ path('app_availability') }}">
         {% for day, label in {
@@ -47,14 +34,18 @@
             'saturday': 'Samedi',
             'sunday': 'Dimanche'
         } %}
-            <div class="day-schedule">
-                <label>
-                    <input type="checkbox" name="days[{{ day }}][active]" value="1" checked>
+            <div class="row day-schedule">
+                <div class="col-3 vertical-align-custom">
+
+                <label class="checkbox-container">
+                    <input class="custom-checkbox" type="checkbox" name="days[{{ day }}][active]" value="1" checked>
                     {{ label }}
+                    <span class="checkmark"></span>
                 </label>
-                <div class="hours">
+                </div>
+                <div class="col-9 hours custom-center">
                     De
-                    <select name="days[{{ day }}][startTime]">
+                    <select name="days[{{ day }}][startTime]" class="select">
                         {% for hour in 8..23 %}
                             {% for minute in [0, 30] %}
                                 <option value="{{ '%02d'|format(hour) }}:{{ '%02d'|format(minute) }}">{{ '%02d'|format(hour) }}:{{ '%02d'|format(minute) }}</option>
@@ -62,7 +53,7 @@
                         {% endfor %}
                     </select>
                     À
-                    <select name="days[{{ day }}][endTime]">
+                    <select name="days[{{ day }}][endTime]" class="select">
                         {% for hour in 8..23 %}
                             {% for minute in [0, 30] %}
                                 <option value="{{ '%02d'|format(hour) }}:{{ '%02d'|format(minute) }}">{{ '%02d'|format(hour) }}:{{ '%02d'|format(minute) }}</option>
@@ -71,9 +62,10 @@
                     </select>
                 </div>
             </div>
-        {% endfor %}
+            {% endfor %}
 
-        <button type="submit">Enregistrer</button>
-    </form>
+            <button type="submit">Enregistrer</button>
+        </form>
+        </div>
 
 {% endblock %}
