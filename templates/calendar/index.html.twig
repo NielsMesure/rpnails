@@ -1,0 +1,41 @@
+{% extends 'base.html.twig' %}
+
+
+{% block content %}
+
+    <style>
+        .fc .fc-prev-button::after,
+        .fc .fc-next-button::after {
+            content: '';
+            display: inline-block;
+            border: solid black;
+            border-width: 0 2px 2px 0;
+            padding: 3px;
+        }
+
+        .fc .fc-prev-button::after {
+            transform: rotate(135deg); /* Flèche gauche */
+            -webkit-transform: rotate(135deg);
+            border-color: white;
+        }
+
+        .fc .fc-next-button::after {
+            transform: rotate(-45deg); /* Flèche droite */
+            -webkit-transform: rotate(-45deg);
+            border-color: white;
+        }
+        .fc {
+            background-color: rgba(108, 105, 105, 0.6);
+            color: #ffffff;
+            border-radius: 1%;
+            padding: 25px;
+
+        }
+    </style>
+    <div id="calendar"></div>
+
+
+    {{ encore_entry_script_tags('app') }}
+
+
+{% endblock %}

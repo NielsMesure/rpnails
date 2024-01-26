@@ -2,6 +2,9 @@
 
 namespace App\Controller\Admin;
 
+
+use App\Entity\Availability;
+use App\Entity\Booking;
 use App\Entity\Prestations;
 use App\Entity\User;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Dashboard;
@@ -44,7 +47,7 @@ class DashboardController extends AbstractDashboardController
     {
         yield MenuItem::linkToDashboard('Dashboard', 'fa fa-home');
         yield MenuItem::linkToCrud('Users', 'fas fa-user', User::class);
-        yield MenuItem::linkToCrud('Prestations', 'fas fa-user', Prestations::class);
+        yield MenuItem::linkToCrud('Prestations', 'fa-solid fa-bell-concierge', Prestations::class);
 
     }
 }

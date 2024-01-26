@@ -1,0 +1,79 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello AvailabilityController!{% endblock %}
+
+{% block content %}
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Lorsque l'utilisateur coche/décoche un jour, activer/désactiver les listes déroulantes
+            document.querySelectorAll('.day-schedule input[type="checkbox"]').forEach(function(checkbox) {
+                checkbox.addEventListener('change', function() {
+                    var daySchedule = this.closest('.day-schedule');
+                    var selects = daySchedule.querySelectorAll('.hours select');
+                    selects.forEach(function(select) {
+                        select.disabled = !checkbox.checked;
+                    });
+                });
+            });
+        });
+    </script>
+
+    <style>
+        .day-schedule {
+            margin-bottom: 1rem;
+            padding: 1rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        .hours select:disabled {
+            background-color: #e9ecef;
+            color: #6c757d;
+        }
+
+        .hours select {
+            margin: 0 0.5rem;
+        }
+    </style>
+
+
+        <form id="businessHoursForm" method="post" action="{{ path('app_availability') }}">
+        {% for day, label in {
+            'monday': 'Lundi',
+            'tuesday': 'Mardi',
+            'wednesday': 'Mercredi',
+            'thursday': 'Jeudi',
+            'friday': 'Vendredi',
+            'saturday': 'Samedi',
+            'sunday': 'Dimanche'
+        } %}
+            <div class="day-schedule">
+                <label>
+                    <input type="checkbox" name="days[{{ day }}][active]" value="1" checked>
+                    {{ label }}
+                </label>
+                <div class="hours">
+                    De
+                    <select name="days[{{ day }}][startTime]">
+                        {% for hour in 8..23 %}
+                            {% for minute in [0, 30] %}
+                                <option value="{{ '%02d'|format(hour) }}:{{ '%02d'|format(minute) }}">{{ '%02d'|format(hour) }}:{{ '%02d'|format(minute) }}</option>
+                            {% endfor %}
+                        {% endfor %}
+                    </select>
+                    À
+                    <select name="days[{{ day }}][endTime]">
+                        {% for hour in 8..23 %}
+                            {% for minute in [0, 30] %}
+                                <option value="{{ '%02d'|format(hour) }}:{{ '%02d'|format(minute) }}">{{ '%02d'|format(hour) }}:{{ '%02d'|format(minute) }}</option>
+                            {% endfor %}
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+        {% endfor %}
+
+        <button type="submit">Enregistrer</button>
+    </form>
+
+{% endblock %}
