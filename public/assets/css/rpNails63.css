@@ -251,3 +251,36 @@ details[open] .select:after {
 }
 
 /* */
+#calendar {
+    width: 100%; /* Largeur par défaut pour les petits écrans */
+}
+
+
+#dateSelector {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#dateContainer div {
+    margin: 0 5px;
+    cursor: pointer;
+    padding: 5px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+/* Ajoutez plus de styles CSS selon vos besoins */
+
+.time-slot {
+    margin: 5px;
+    padding: 10px;
+    background-color: #f0f0f0;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.time-slot:hover {
+    background-color: #e0e0e0;
+}

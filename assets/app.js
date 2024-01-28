@@ -6,13 +6,20 @@ import 'bootstrap-icons/font/bootstrap-icons.css';
 import bootstrap5Plugin from '@fullcalendar/bootstrap5';
 import timeGridPlugin from '@fullcalendar/timegrid'
 
+var calendar;
 document.addEventListener('DOMContentLoaded', function() {
     var calendarEl = document.getElementById('calendar');
 
     fetch('/admin/api/get-business-hours')
         .then(response => response.json())
         .then(function(businessHoursData) {
-    var calendar = new Calendar(calendarEl, {
+     calendar = new Calendar(calendarEl, {
+         contentHeight: 'auto',
+
+        // Définit l'heure de début pour toutes les vues
+        slotMinTime: '08:00:00', // Heure de début à 8h
+        // Définit l'heure de fin pour toutes les vues
+        slotMaxTime: '20:30:00', // Heure de fin à 20h30
         themeSystem: 'bootstrap5',
         plugins: [ dayGridPlugin , interactionPlugin, bootstrap5Plugin,timeGridPlugin ],
         dateClick: function(info) {
@@ -22,7 +29,7 @@ document.addEventListener('DOMContentLoaded', function() {
         headerToolbar: {
 
             center: 'title',
-            left: 'dayGridMonth,timeGridWeek,timeGridDay' // user can switch between the two
+            left: 'dayGridMonth,timeGridWeek,timeGridDay'
         },
         businessHours: fetch('/admin/api/get-business-hours')
             .then(response => response.json())

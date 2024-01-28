@@ -11,7 +11,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Serializer\SerializerInterface;
 
-class AddDisponibiliteController extends AbstractController
+class AddManualBookingController extends AbstractController
 {
     private $entityManager;
 
@@ -35,6 +35,6 @@ class AddDisponibiliteController extends AbstractController
         $this->entityManager->persist($disponibilite);
         $this->entityManager->flush();
 
-        return new JsonResponse(['status' => 'success']);
+        return new JsonResponse(['status' => 'successbooking']);
     }
 }

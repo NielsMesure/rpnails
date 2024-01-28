@@ -1,0 +1,16 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Réserver{% endblock %}
+
+{% block content %}
+    <div id="dateSelector">
+        <button id="prevWeek">« Semaine Précédente</button>
+        <div id="dateContainer" style="display: flex; overflow-x: auto;"></div>
+        <button id="nextWeek">Semaine Suivante »</button>
+    </div>
+
+    <div id="availableTimes">
+        <!-- Les créneaux horaires disponibles seront affichés ici -->
+    </div>
+
+{% endblock %}

@@ -6,7 +6,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
-class HorairesController extends AbstractController
+class OpeningHoursController extends AbstractController
 {
     #[Route('/admin/horaires', name: 'app_horaires')]
     public function index(): Response
