@@ -2,12 +2,12 @@
 
 namespace App\Entity;
 
-use App\Repository\DisponibiliteRepository;
+use App\Repository\AbsenceRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Entity(repositoryClass: DisponibiliteRepository::class)]
-class Disponibilite
+#[ORM\Entity(repositoryClass: AbsenceRepository::class)]
+class Absence
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -17,11 +17,14 @@ class Disponibilite
     #[ORM\Column(type: Types::DATE_MUTABLE)]
     private ?\DateTimeInterface $date = null;
 
-    #[ORM\Column(type: Types::TIME_MUTABLE)]
+    #[ORM\Column(type: Types::TIME_MUTABLE, nullable: true)]
     private ?\DateTimeInterface $startTime = null;
 
-    #[ORM\Column(type: Types::TIME_MUTABLE)]
+    #[ORM\Column(type: Types::TIME_MUTABLE, nullable: true)]
     private ?\DateTimeInterface $endTime = null;
+
+    #[ORM\Column]
+    private ?bool $fullDay = null;
 
     public function getId(): ?int
     {
@@ -45,7 +48,7 @@ class Disponibilite
         return $this->startTime;
     }
 
-    public function setStartTime(\DateTimeInterface $startTime): static
+    public function setStartTime(?\DateTimeInterface $startTime): static
     {
         $this->startTime = $startTime;
 
@@ -57,9 +60,21 @@ class Disponibilite
         return $this->endTime;
     }
 
-    public function setEndTime(\DateTimeInterface $endTime): static
+    public function setEndTime(?\DateTimeInterface $endTime): static
     {
         $this->endTime = $endTime;
+
+        return $this;
+    }
+
+    public function isFullDay(): ?bool
+    {
+        return $this->fullDay;
+    }
+
+    public function setFullDay(bool $fullDay): static
+    {
+        $this->fullDay = $fullDay;
 
         return $this;
     }

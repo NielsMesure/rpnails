@@ -4,79 +4,76 @@ import interactionPlugin from '@fullcalendar/interaction';
 import 'bootstrap/dist/css/bootstrap.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import bootstrap5Plugin from '@fullcalendar/bootstrap5';
-import timeGridPlugin from '@fullcalendar/timegrid'
+import timeGridPlugin from '@fullcalendar/timegrid';
+import 'bootstrap';
 
-var calendar;
+
+
 document.addEventListener('DOMContentLoaded', function() {
     var calendarEl = document.getElementById('calendar');
-
+    var absenceOffCanvas = new bootstrap.Offcanvas(document.getElementById('absenceOffCanvas'));
+    var calendar;
     fetch('/admin/api/get-business-hours')
         .then(response => response.json())
         .then(function(businessHoursData) {
-     calendar = new Calendar(calendarEl, {
-         contentHeight: 'auto',
+            calendar = new Calendar(calendarEl, {
+                contentHeight: 'auto',
+                selectable: true,
+                selectMirror: true,
+                slotMinTime: '08:00:00', // Heure de début à 8h
+                slotMaxTime: '20:30:00', // Heure de fin à 20h30
+                themeSystem: 'bootstrap5',
+                plugins: [dayGridPlugin, interactionPlugin, bootstrap5Plugin, timeGridPlugin],
+                headerToolbar: {
+                    center: 'title',
+                    left: 'dayGridMonth,timeGridWeek,timeGridDay'
+                },
+                businessHours: businessHoursData,
+                dateClick: function(info) {
+                    // Ouvrir l'OffCanvas
+                    absenceOffCanvas.show();
 
-        // Définit l'heure de début pour toutes les vues
-        slotMinTime: '08:00:00', // Heure de début à 8h
-        // Définit l'heure de fin pour toutes les vues
-        slotMaxTime: '20:30:00', // Heure de fin à 20h30
-        themeSystem: 'bootstrap5',
-        plugins: [ dayGridPlugin , interactionPlugin, bootstrap5Plugin,timeGridPlugin ],
-        dateClick: function(info) {
-            handleDateClick(info.dateStr); // Gère le clic sur une date
-        },
-        events: '/get-disponibilites',
-        headerToolbar: {
+                    // Pré-remplir le champ de date dans l'OffCanvas
+                    document.getElementById('absenceDate').value = info.dateStr;
+                },
+            });
 
-            center: 'title',
-            left: 'dayGridMonth,timeGridWeek,timeGridDay'
-        },
-        businessHours: fetch('/admin/api/get-business-hours')
-            .then(response => response.json())
-            .then(function(businessHours) {
-                calendar.setOption('businessHours', businessHours);
-                calendar.refetchEvents();
-            }),
-
-
-    });
-
-
-    calendar.render();
+            calendar.render();
         })
         .catch(function(error) {
             console.error('Error:', error);
         });
+
+    document.getElementById('absenceForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+
+        var formData = new FormData(this); // 'this' fait référence à l'élément form
+
+        // Assurez-vous que les champs 'date', 'startTime', 'endTime' et 'allDay' existent dans votre formulaire
+        var data = {
+            date: formData.get('date'), // Récupère la valeur du champ 'date'
+            startTime: formData.get('startTime'), // Récupère la valeur du champ 'startTime'
+            endTime: formData.get('endTime'), // Récupère la valeur du champ 'endTime'
+            allDay: formData.get('allDay') === 'on' // Récupère la valeur du champ 'allDay'
+        };
+
+        fetch('/add-absence', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data)
+        })
+            .then(response => response.json())
+            .then(data => {
+                absenceOffCanvas.hide();
+                calendar.refetchEvents();
+            })
+            .catch(error => {
+                console.error('Erreur:', error);
+            });
+    });
 });
 
-function handleDateClick(date) {
-    var startTime = prompt("Heure de début (HH:MM)", "14:30");
-    var endTime = prompt("Heure de fin (HH:MM)", "19:00");
 
-    if (startTime && endTime) {
-        sendDisponibiliteData(date, startTime, endTime);
-    }
-}
 
-function sendDisponibiliteData(date, startTime, endTime) {
-    fetch('/add-disponibilite', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ date: date, startTime: startTime, endTime: endTime })
-    })
-        .then(response => response.json())
-        .then(data => {
-            console.log('Success:', data);
-        })
-        .catch((error) => {
-            console.error('Error:', error);
-        });
-    calendar.addEvent({
-        title: `Dispo: ${startTime} - ${endTime}`,
-        start: `${date}T${startTime}`,
-        end: `${date}T${endTime}`,
-        color: '#28a745' // Choisissez la couleur que vous voulez
-    });
-}
