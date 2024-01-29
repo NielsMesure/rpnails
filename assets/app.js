@@ -23,16 +23,21 @@ document.addEventListener('DOMContentLoaded', function() {
             fetch('/get-absences')
                 .then(response => response.json())
                 .then(absences => {
+                    console.log('Absences:', absences); // Pour le débogage
                     absences.forEach(absence => {
-                        absencesMap[absence.start] = absence.id; // Stocker l'ID de l'absence
+                        // Extraire uniquement la partie date
+                        const datePart = absence.start.split(' ')[0];
+                        absencesMap[datePart] = absence.id;
                     });
                     initializeCalendar(businessHoursData);
                 })
                 .catch(error => console.error('Erreur lors de la récupération des absences:', error));
+
         })
         .catch(function(error) {
             console.error('Error:', error);
         });
+
 
     function initializeCalendar(businessHoursData) {
         calendar = new Calendar(calendarEl, {
@@ -47,16 +52,17 @@ document.addEventListener('DOMContentLoaded', function() {
                 center: 'title',
                 left: 'dayGridMonth,timeGridWeek,timeGridDay'
             },
+
             businessHours: businessHoursData,
             dateClick: function(info) {
                 const dateStr = info.dateStr;
                 const absenceId = absencesMap[dateStr];
-
+                console.log('Date cliquée:', dateStr, 'ID d\'absence:', absenceId); // Pour le débogage
                 if (absenceId) {
                     selectedAbsenceId = absenceId;
-                    deleteButton.style.display = 'block';
+                    deleteButton.style.display = 'block';  // Afficher le bouton
                 } else {
-                    deleteButton.style.display = 'none';
+                    deleteButton.style.display = 'none';  // Cacher le bouton s'il n'y a pas d'absence
                 }
 
                 absenceOffCanvas.show();
@@ -76,9 +82,14 @@ document.addEventListener('DOMContentLoaded', function() {
                 .then(response => response.json())
                 .then(data => {
                     if (data.status === 'success') {
-                        delete absencesMap[selectedAbsenceId]; // Supprimer l'absence de l'objet
+                        // Trouvez la clé correspondant à l'ID dans absencesMap
+                        const dateKey = Object.keys(absencesMap).find(key => absencesMap[key] === selectedAbsenceId);
+                        if (dateKey) {
+                            delete absencesMap[dateKey]; // Supprimez l'entrée de la map
+                        }
+
                         absenceOffCanvas.hide();
-                        calendar.refetchEvents();
+                        calendar.refetchEvents(); // Rafraîchir les événements du calendrier
                     }
                 })
                 .catch(error => console.error('Erreur:', error));
@@ -110,8 +121,14 @@ document.addEventListener('DOMContentLoaded', function() {
         })
             .then(response => response.json())
             .then(data => {
-                absenceOffCanvas.hide();
-                calendar.refetchEvents();
+                if (data.status === 'success') {
+                    // Mettre à jour absencesMap avec la nouvelle absence
+                    const datePart = formData.get('date');
+                    absencesMap[datePart] = data.id;
+
+                    absenceOffCanvas.hide();
+                    calendar.refetchEvents(); // Rafraîchir les événements du calendrier
+                }
             })
             .catch(error => {
                 console.error('Erreur:', error);

@@ -35,7 +35,7 @@ class AbsenceController extends AbstractController
         $entityManager->persist($absence);
         $entityManager->flush();
 
-        return new JsonResponse(['status' => 'success']);
+        return new JsonResponse(['status' => 'success', 'id' => $absence->getId()]);
     }
 
 
@@ -45,6 +45,7 @@ class AbsenceController extends AbstractController
 
         $events = array_map(function ($absence) {
             $event = [
+                'id' => $absence->getId(),
                 'title' => 'Absent',
                 'start' => $absence->getDate()->format('Y-m-d'),
                 'allDay' => $absence->isFullDay(),
@@ -62,6 +63,20 @@ class AbsenceController extends AbstractController
         }, $absences);
 
         return new JsonResponse($events);
+    }
+
+    #[Route('/delete-absence/{id}', name: 'delete_absence', methods: ['DELETE'])]
+    public function deleteAbsence(int $id, EntityManagerInterface $entityManager): JsonResponse {
+        $absence = $entityManager->getRepository(Absence::class)->find($id);
+
+        if ($absence) {
+            $entityManager->remove($absence);
+            $entityManager->flush();
+
+            return new JsonResponse(['status' => 'success']);
+        }
+
+        return new JsonResponse(['status' => 'error', 'message' => 'Absence not found'], 404);
     }
 
 }
