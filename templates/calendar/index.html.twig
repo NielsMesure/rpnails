@@ -51,14 +51,38 @@
                     <input type="date" class="form-control" id="absenceDate" name="date">
                 </div>
 
-                <div class="form-group">
-                    <label for="startTime">Heure de début</label>
-                    <input type="time" class="form-control" id="startTime" name="startTime">
-                </div>
+                <label for="absenceStartTime" class="col-form-label">Heure de début</label>
+                <div class="form-group row">
 
-                <div class="form-group">
-                    <label for="endTime">Heure de fin</label>
-                    <input type="time" class="form-control" id="endTime" name="endTime">
+                    <div class="col-5">
+                        <select id="absenceStartHour" name="startHour" class="form-control">
+                            {% for hour in 9..21 %}
+                                <option value="{{ '%02d'|format(hour) }}">{{ '%02d'|format(hour) }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-5">
+                        <select id="absenceStartMinute" name="startMinute" class="form-control">
+                            <option value="00">00</option>
+                            <option value="30">30</option>
+                        </select>
+                    </div>
+                </div>
+                <label for="absenceEndTime" class="col-form-label">Heure de fin</label>
+                <div class="form-group row">
+                    <div class="col-5">
+                        <select id="absenceEndHour" name="endHour" class="form-control">
+                            {% for hour in 9..21 %}
+                                <option value="{{ '%02d'|format(hour) }}">{{ '%02d'|format(hour) }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-5">
+                        <select id="absenceEndMinute" name="endMinute" class="form-control">
+                            <option value="00">00</option>
+                            <option value="30">30</option>
+                        </select>
+                    </div>
                 </div>
 
                 <div class="form-group form-check">
@@ -67,6 +91,11 @@
                 </div>
 
                 <button type="submit" class="btn btn-primary">Enregistrer</button>
+                <button type="button" class="btn btn-danger" id="deleteAbsenceButton" style="display: none;">
+                    Supprimer l'absence
+                </button>
+
+
             </form>
         </div>
     </div>

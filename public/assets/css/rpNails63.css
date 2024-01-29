@@ -286,3 +286,10 @@ details[open] .select:after {
 }
 
 
+#absenceForm .form-group {
+    margin-bottom: 15px;
+}
+
+#absenceForm .form-control {
+    margin-top: 5px;
+}

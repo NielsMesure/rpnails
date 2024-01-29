@@ -37,4 +37,31 @@ class AbsenceController extends AbstractController
 
         return new JsonResponse(['status' => 'success']);
     }
+
+
+    #[Route('/get-absences', name: 'get-absences')]
+    public function getAbsences(EntityManagerInterface $entityManager): JsonResponse {
+        $absences = $entityManager->getRepository(Absence::class)->findAll();
+
+        $events = array_map(function ($absence) {
+            $event = [
+                'title' => 'Absent',
+                'start' => $absence->getDate()->format('Y-m-d'),
+                'allDay' => $absence->isFullDay(),
+                'color' => 'grey',
+            ];
+
+            if (!$absence->isFullDay()) {
+                $startDateTime = $absence->getDate()->format('Y-m-d') . ' ' . $absence->getStartTime()->format('H:i:s');
+                $endDateTime = $absence->getDate()->format('Y-m-d') . ' ' . $absence->getEndTime()->format('H:i:s');
+                $event['start'] = $startDateTime;
+                $event['end'] = $endDateTime;
+            }
+
+            return $event;
+        }, $absences);
+
+        return new JsonResponse($events);
+    }
+
 }
