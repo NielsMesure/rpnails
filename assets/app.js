@@ -49,8 +49,9 @@ document.addEventListener('DOMContentLoaded', function() {
             themeSystem: 'bootstrap5',
             plugins: [dayGridPlugin, interactionPlugin, bootstrap5Plugin, timeGridPlugin],
             headerToolbar: {
-                center: 'title',
-                left: 'dayGridMonth,timeGridWeek,timeGridDay'
+                start: 'prev,next today', // Boutons sur le côté gauche
+                center: 'title', // Titre au centre
+                end: 'dayGridMonth,timeGridWeek,timeGridDay'
             },
 
             businessHours: businessHoursData,

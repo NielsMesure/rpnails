@@ -281,7 +281,7 @@ details[open] .select:after {
 
 @media (max-width: 730px) {
     .offcanvas-size-xl {
-        --bs-offcanvas-width: min(95vw, 80vw) !important;
+        --bs-offcanvas-width: min(100vw, 100vw) !important;
     }
 }
 

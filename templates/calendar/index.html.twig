@@ -70,11 +70,38 @@
             color: #ffffff;
             border-radius: 1%;
             padding: 25px;
-
         }
+        .fc .fc-button {
+            background-color: #7b7a7a; !important;
+        }
+
+        .fc .fc-button:active, .fc .fc-button:focus {
+            background-color: #7b7a7a; /* Couleur de fond encore plus foncée pour actif/focus */
+            color: white; /* Texte blanc */
+            border-color: #004085; /* Bordure encore plus foncée */
+        }
+        @media (max-width: 768px) {
+            .fc .fc-toolbar-title {
+                font-size: 14px; /* Réduire la taille du titre */
+            }
+            .fc-header-toolbar .fc-button {
+                font-size: 12px; /* Réduire la taille du texte des boutons */
+                padding: 6px 8px; /* Ajuster le padding des boutons */
+
+            }
+            /* Autres ajustements CSS pour les petits écrans */
+        }
+        @media (max-width: 768px) {
+            .fc-header-toolbar .fc-today-button,
+            .fc-header-toolbar .fc-timeGridDay-button {
+                display: none; /* Masquer les boutons "Day" et "Week" sur petits écrans */
+            }
+        }
+
+
     </style>
 
-    <button class="btn btn-primary" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasExample" aria-controls="offcanvasExample">
+    <button class="btn" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasExample" aria-controls="offcanvasExample" style="background-color: #7b7a7a; color: white; margin-bottom: 10px">
         Mettre à jour les horaires d'ouvertures
     </button>
 
@@ -127,7 +154,7 @@
                         </div>
                     {% endfor %}
 
-                    <button type="submit">Enregistrer</button>
+                    <button type="submit" class="btn custom-submit">Enregistrer</button>
                 </form>
             </div>
         </div>
