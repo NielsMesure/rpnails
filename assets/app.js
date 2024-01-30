@@ -113,6 +113,8 @@ document.addEventListener('DOMContentLoaded', function() {
             endTime: `${endHour}:${endMinute}`
         };
 
+
+
         fetch('/add-absence', {
             method: 'POST',
             headers: {
@@ -122,7 +124,9 @@ document.addEventListener('DOMContentLoaded', function() {
         })
             .then(response => response.json())
             .then(data => {
-                if (data.status === 'success') {
+                if (data.status === 'error') {
+                    alert(data.message); // Affiche un message d'erreur
+                } else {
                     // Mettre à jour absencesMap avec la nouvelle absence
                     const datePart = formData.get('date');
                     absencesMap[datePart] = data.id;

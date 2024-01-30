@@ -13,8 +13,6 @@
     <script src="{{ asset('assets/js/rpNails63.js') }}"></script>
     <script src="https://code.jquery.com/jquery-3.6.3.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
-
-
 </head>
 
 
@@ -34,20 +32,16 @@
                 <div class="collapse navbar-collapse navbar-custom" id="navbarSupportedContent">
                     <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                         <li class="nav-item">
-                            <a class="nav-link" aria-current="page" href="{{ path('app_calendar') }}">Calendar</a>
+                            <a class="nav-link" aria-current="page" href="{{ path('app_home') }}">Mon travail</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" aria-current="page" href="#">Dispos</a>
+                            <a class="nav-link" aria-current="page" href="#">Réserver</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" aria-current="page" href="#">A propos de mon travail</a>
+                            <a class="nav-link" aria-current="page" href="#">A propos de moi</a>
                         </li>
 
-                        {% if is_granted("ROLE_ADMIN") %}
-                            <li class="nav-item">
-                                <a class="nav-link" aria-current="page" href="#">Interface Admin</a>
-                            </li>
-                        {% endif %}
+
                     </ul>
 
                     <form  role="search">
@@ -60,6 +54,10 @@
                                     <ul class="dropdown-menu">
                                         <li><a class="dropdown-item" href="{{ path('app_account_password') }}">Mes Informations</a></li>
                                         <li><a class="dropdown-item" href="#">Mes Réservations</a></li>
+                                        {% if is_granted("ROLE_ADMIN") %}
+                                            <li><a class="dropdown-item" aria-current="page" href="{{ path('admin') }}">Interface Admin</a></li>
+                                            <li><a class="dropdown-item" aria-current="page" href="{{ path('app_calendar') }}">Calendrier</a></li>
+                                        {% endif %}
                                         <li><a class="dropdown-item custom-logout" href="{{ path('app_logout') }}">Déconnexion</a></li>
                                     </ul>
                                 </div>

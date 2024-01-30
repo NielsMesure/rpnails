@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Absence;
 use Doctrine\ORM\EntityManagerInterface;
+use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -12,20 +13,34 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class AbsenceController extends AbstractController
 {
+    /**
+     * @throws Exception
+     */
     #[Route('/add-absence', name: 'add_absence')]
 
     public function addAbsence(Request $request, EntityManagerInterface $entityManager): JsonResponse {
         $data = json_decode($request->getContent(), true);
 
+        $date = new \DateTime($data['date']);
+        $allDay = $data['allDay'];
+        $startTime = $allDay ? null : \DateTime::createFromFormat('H:i', $data['startTime']);
+        $endTime = $allDay ? null : \DateTime::createFromFormat('H:i', $data['endTime']);
+        $absenceRepository = $entityManager->getRepository(Absence::class);
+        $existingAbsence = $absenceRepository->findOneBy([
+            'date' => $date,
+            'startTime' => $startTime,
+            'endTime' => $endTime
+        ]);
+
+        if ($existingAbsence) {
+            return new JsonResponse(['status' => 'error', 'message' => 'Une absence est déjà planifiée pour cette date.'], Response::HTTP_CONFLICT);
+        }
+
         $absence = new Absence();
-        $absence->setDate(new \DateTime($data['date']));
-        $absence->setFullDay($data['allDay']);
+        $absence->setDate($date);
+        $absence->setFullDay($allDay);
 
-        if (!$data['allDay']) {
-            // Assurez-vous que les heures sont correctement converties
-            $startTime = \DateTime::createFromFormat('H:i', $data['startTime']);
-            $endTime = \DateTime::createFromFormat('H:i', $data['endTime']);
-
+        if (!$allDay) {
             if ($startTime && $endTime) {
                 $absence->setStartTime($startTime);
                 $absence->setEndTime($endTime);

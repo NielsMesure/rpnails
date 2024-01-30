@@ -21,6 +21,32 @@ class AbsenceRepository extends ServiceEntityRepository
         parent::__construct($registry, Absence::class);
     }
 
+    public function findAbsencesBeforeDate(\DateTime $date)
+    {
+        return $this->createQueryBuilder('a')
+            ->where('a.date < :date')
+            ->setParameter('date', $date)
+            ->getQuery()
+            ->getResult();
+    }
+
+
+    public function findAbsenceForTimeRange(\DateTime $date, ?\DateTime $startTime, ?\DateTime $endTime, bool $allDay): ?Absence {
+        $qb = $this->createQueryBuilder('a')
+            ->where('a.date = :date')
+            ->setParameter('date', $date);
+
+        if ($allDay) {
+            $qb->andWhere('a.allDay = true');
+        } else {
+            $qb->andWhere('a.startTime <= :endTime AND a.endTime >= :startTime')
+                ->setParameter('startTime', $startTime)
+                ->setParameter('endTime', $endTime);
+        }
+
+        return $qb->getQuery()->getOneOrNullResult();
+    }
+
 //    /**
 //     * @return Absence[] Returns an array of Absence objects
 //     */

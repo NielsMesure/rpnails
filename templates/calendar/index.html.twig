@@ -106,15 +106,15 @@
     </button>
 
     <div class="offcanvas offcanvas-size-xl offcanvas-start" tabindex="-1" id="offcanvasExample"  aria-labelledby="offcanvasExampleLabel">
-        <div class="offcanvas-header">
-            <h5 id="absenceOffCanvasLabel">Horaires d'ouverture</h5>
-            <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        <div class="offcanvas-header shadow">
+            <h5 id="absenceOffCanvasLabel" style="color: white">Horaires d'ouverture</h5>
+            <button type="button" class="btn-close text-reset btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
         </div>
         <div class="offcanvas-body">
 
             <div class="container custom-availability-container">
 
-                <form id="businessHoursForm" method="post" action="{{ path('app_availability') }}">
+                <form id="businessHoursForm" style="color: white" method="post" action="{{ path('app_availability') }}">
                     {% for day, label in {
                         'monday': 'Lundi',
                         'tuesday': 'Mardi',
@@ -135,7 +135,7 @@
                             </div>
                             <div class="col-lg-9 col-12  hours custom-center ">
                                 De
-                                <select name="days[{{ day }}][startTime]" class="select">
+                                <select name="days[{{ day }}][startTime]" class="select" style="background-color: #716f6f; color: white">
                                     {% for hour in 8..23 %}
                                         {% for minute in [0, 30] %}
                                             <option value="{{ '%02d'|format(hour) }}:{{ '%02d'|format(minute) }}">{{ '%02d'|format(hour) }}:{{ '%02d'|format(minute) }}</option>
@@ -143,7 +143,7 @@
                                     {% endfor %}
                                 </select>
                                 À
-                                <select name="days[{{ day }}][endTime]" class="select">
+                                <select name="days[{{ day }}][endTime]" class="select" style="background-color: #716f6f; color: white">
                                     {% for hour in 11..23 %}
                                         {% for minute in [0, 30] %}
                                             <option value="{{ '%02d'|format(hour) }}:{{ '%02d'|format(minute) }}">{{ '%02d'|format(hour) }}:{{ '%02d'|format(minute) }}</option>
@@ -167,59 +167,60 @@
 
 
     <!-- OffCanvas Bootstrap pour l'absence -->
-    <div class="offcanvas offcanvas-start" tabindex="-1" id="absenceOffCanvas" aria-labelledby="absenceOffCanvasLabel">
-        <div class="offcanvas-header">
-            <h5 id="absenceOffCanvasLabel">Ajouter une Absence</h5>
-            <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    <div class="offcanvas offcanvas-start" tabindex="-1" id="absenceOffCanvas" aria-labelledby="absenceOffCanvasLabel" style="background-color: #555353;">
+        <div class="offcanvas-header shadow">
+            <h5 id="absenceOffCanvasLabel" style="color: white">Ajouter une Absence</h5>
+            <button type="button" class="btn-close text-reset btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
         </div>
         <div class="offcanvas-body">
             <form id="absenceForm">
-                <div class="form-group">
-                    <label for="absenceDate">Date</label>
-                    <input type="date" class="form-control" id="absenceDate" name="date">
+                <div class="form-group row day-schedule">
+
+                    <label for="absenceDate" class="text-white">Date</label>
+                    <input type="date" id="absenceDate" name="date" class="form-control offcanvas-button-custom">
+                    <div class="form-group form-check pt-2">
+                        <input type="checkbox" class="form-check-input" id="allDay" name="allDay">
+                        <label class="form-check-label text-white" for="allDay">Toute la journée</label>
+                    </div>
                 </div>
 
-                <label for="absenceStartTime" class="col-form-label">Heure de début</label>
-                <div class="form-group row">
 
-                    <div class="col-5">
-                        <select id="absenceStartHour" name="startHour" class="form-control">
+                <div class="form-group row day-schedule pt-2">
+                    <label for="absenceStartTime" class="col-form-label col-12 text-white pt-0">Heure de début</label>
+
+                    <div class="col-5 ">
+                        <select id="absenceStartHour" name="startHour" class="form-control offcanvas-button-custom">
                             {% for hour in 9..21 %}
                                 <option value="{{ '%02d'|format(hour) }}">{{ '%02d'|format(hour) }}</option>
                             {% endfor %}
                         </select>
                     </div>
                     <div class="col-5">
-                        <select id="absenceStartMinute" name="startMinute" class="form-control">
+                        <select id="absenceStartMinute" name="startMinute" class="form-control offcanvas-button-custom">
                             <option value="00">00</option>
                             <option value="30">30</option>
                         </select>
                     </div>
                 </div>
-                <label for="absenceEndTime" class="col-form-label">Heure de fin</label>
-                <div class="form-group row">
+                <div class="form-group row day-schedule pt-2">
+                <label for="absenceEndTime" class="col-form-label col-12 text-white pt-0">Heure de fin</label>
                     <div class="col-5">
-                        <select id="absenceEndHour" name="endHour" class="form-control">
+                        <select id="absenceEndHour" name="endHour" class="form-control offcanvas-button-custom" >
                             {% for hour in 9..21 %}
                                 <option value="{{ '%02d'|format(hour) }}">{{ '%02d'|format(hour) }}</option>
                             {% endfor %}
                         </select>
                     </div>
                     <div class="col-5">
-                        <select id="absenceEndMinute" name="endMinute" class="form-control">
+                        <select id="absenceEndMinute" name="endMinute" class="form-control offcanvas-button-custom" >
                             <option value="00">00</option>
                             <option value="30">30</option>
                         </select>
                     </div>
                 </div>
 
-                <div class="form-group form-check">
-                    <input type="checkbox" class="form-check-input" id="allDay" name="allDay">
-                    <label class="form-check-label" for="allDay">Toute la journée</label>
-                </div>
-
-                <button type="submit" class="btn btn-primary">Enregistrer</button>
-                <button type="button" class="btn btn-danger mt-3" id="deleteAbsenceButton" style="display: none;">
+                <button type="submit" class="btn custom-submit">Enregistrer</button>
+                <button type="button" class="btn custom-submit mt-3" id="deleteAbsenceButton" style="display: none; background-color: #6e0101">
                     Supprimer l'absence
                 </button>
 

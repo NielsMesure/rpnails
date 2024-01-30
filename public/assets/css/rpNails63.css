@@ -156,7 +156,6 @@ details[open] .select:after {
     display: inline-block;
     position: relative;
     padding-left: 35px;
-    margin-bottom: 12px;
     cursor: pointer;
     font-size: 16px;
     user-select: none;
@@ -231,13 +230,13 @@ details[open] .select:after {
 .day-schedule {
     margin-bottom: 1rem;
     padding: 1rem;
-    border: 1px solid #ddd;
+    box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
     border-radius: 4px;
 }
 
 .hours select:disabled {
-    background-color: #e9ecef;
-    color: #6c757d;
+    background-color: #a8a8a8 !important;
+    color: #087de7;
 }
 
 .hours select {
@@ -263,26 +262,38 @@ details[open] .select:after {
     border: 1px solid #ccc;
     border-radius: 4px;
 }
+
+
 .offcanvas-size-xl {
     --bs-offcanvas-width: min(95vw, 35vw) !important;
+    background-color: #555353;
 }
 
 @media (max-width: 1300px) {
     .offcanvas-size-xl {
         --bs-offcanvas-width: min(95vw, 45vw) !important;
+        background-color: #555353;
     }
 }
 
 @media (max-width: 1000px) {
     .offcanvas-size-xl {
         --bs-offcanvas-width: min(95vw, 60vw) !important;
+        background-color: #555353;
     }
 }
 
 @media (max-width: 730px) {
     .offcanvas-size-xl {
         --bs-offcanvas-width: min(100vw, 100vw) !important;
+        background-color: #555353;
     }
+}
+
+.offcanvas-button-custom{
+    background-color: #716f6f;
+    color: white;
+    border-color: #716f6f
 }
 
 
