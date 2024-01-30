@@ -5,6 +5,7 @@ namespace App\Controller;
 
 use App\Entity\BusinessHours;
 use Doctrine\ORM\EntityManagerInterface;
+use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -14,6 +15,9 @@ use Symfony\Component\Serializer\SerializerInterface;
 
 class AvailabilityController extends AbstractController
 {
+    /**
+     * @throws Exception
+     */
     #[Route('/admin/ajouthoraires', name: 'app_availability')]
     public function enregistrerHoraires(Request $request, EntityManagerInterface $entityManager): JsonResponse {
         $entityManager->createQuery('DELETE FROM App\Entity\BusinessHours')->execute();
@@ -38,7 +42,7 @@ class AvailabilityController extends AbstractController
         }
 
         $entityManager->flush();
-        return new JsonResponse(['status' => 'success']);
+        return new JsonResponse(null, Response::HTTP_OK);
     }
 
     #[Route('/admin/api/get-business-hours', name: 'api_get_business_hours')]

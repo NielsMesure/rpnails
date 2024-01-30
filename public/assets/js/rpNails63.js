@@ -53,6 +53,8 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
+
+
     prevWeek.addEventListener('click', function() {
         currentDate.setDate(currentDate.getDate() - 7);
         fillDateContainer();

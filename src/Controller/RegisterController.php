@@ -39,9 +39,6 @@ class RegisterController extends AbstractController
                 $this->entityManager->persist($user);
                 $this->entityManager->flush();
 
-
-                $content = "Bonjour ".$user->getFirstname()."<br/>Bienvenue sur Netflux, la première plateforme de VOD 2.0. Votre inscription à bien été prise en compte";
-
                 $notification = 'Compte crée';
                 return $this->redirectToRoute('app_home');
 

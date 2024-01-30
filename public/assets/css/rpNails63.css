@@ -93,19 +93,13 @@ select:-webkit-autofill {
 
 @media (max-width: 1835px) {
     .custom-availability-container{
-        width: 50%;
-    }
-}
-@media (max-width: 1200px) {
-    .custom-availability-container{
         width: auto;
     }
 }
 
-@media (max-width: 467px) {
-    .custom-center{
-        align-items: end;
-    }
+
+@media (max-width: 1200px) {
+
 }
 
 .custom-center{
@@ -269,9 +263,33 @@ details[open] .select:after {
     border: 1px solid #ccc;
     border-radius: 4px;
 }
+.offcanvas-size-xl {
+    --bs-offcanvas-width: min(95vw, 35vw) !important;
+}
+
+@media (max-width: 1300px) {
+    .offcanvas-size-xl {
+        --bs-offcanvas-width: min(95vw, 45vw) !important;
+    }
+}
+
+@media (max-width: 1000px) {
+    .offcanvas-size-xl {
+        --bs-offcanvas-width: min(95vw, 60vw) !important;
+    }
+}
+
+@media (max-width: 730px) {
+    .offcanvas-size-xl {
+        --bs-offcanvas-width: min(95vw, 80vw) !important;
+    }
+}
+
 
 /* Ajoutez plus de styles CSS selon vos besoins */
-
+.custom-offcanvas-width {
+    width: 500px; !important;/* ou toute autre largeur souhaitée */
+}
 .time-slot {
     margin: 5px;
     padding: 10px;
