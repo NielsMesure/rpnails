@@ -33,7 +33,7 @@ class AbsenceController extends AbstractController
         ]);
 
         if ($existingAbsence) {
-            return new JsonResponse(['status' => 'error', 'message' => 'Une absence est déjà planifiée pour cette date.'], Response::HTTP_CONFLICT);
+            return new JsonResponse(['status' => 'error', 'message' => 'OK.'], Response::HTTP_CONFLICT);
         }
 
         $absence = new Absence();
