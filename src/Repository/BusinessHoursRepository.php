@@ -20,7 +20,14 @@ class BusinessHoursRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, BusinessHours::class);
     }
-
+    public function findByDay($day)
+    {
+        return $this->createQueryBuilder('b')
+            ->where('b.day = :day')
+            ->setParameter('day', $day)
+            ->getQuery()
+            ->getResult();
+    }
 //    /**
 //     * @return BusinessHours[] Returns an array of BusinessHours objects
 //     */

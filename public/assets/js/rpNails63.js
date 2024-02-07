@@ -1,11 +1,20 @@
 document.addEventListener('DOMContentLoaded', function() {
     const dateContainer = document.getElementById('dateContainer');
+    const availableTimesContainer = document.getElementById('availableTimes');
     const prevWeek = document.getElementById('prevWeek');
     const nextWeek = document.getElementById('nextWeek');
 
     let currentDate = new Date();
 
-
+    document.querySelectorAll('.prestation-btn').forEach(button => {
+        button.addEventListener('click', function() {
+            const duration = this.dataset.duration;
+            // Stockez la durée ou l'ID de la prestation selon le besoin
+            // Affichez les sélecteurs de date et les créneaux
+            document.getElementById('dateSelector').style.display = 'block';
+            // Peut-être initialiser le calendrier ici ou faire d'autres actions
+        });
+    });
 
     function fillDateContainer() {
         dateContainer.innerHTML = '';
@@ -16,7 +25,7 @@ document.addEventListener('DOMContentLoaded', function() {
             dayDiv.textContent = `${tempDate.getDate()}/${tempDate.getMonth() + 1}`;
             dayDiv.dataset.date = tempDate.toISOString().split('T')[0];
             dayDiv.addEventListener('click', function() {
-                fetchAvailableTimes(this.dataset.date);
+                fetchOpeningHoursAndAbsences(this.dataset.date);
             });
             dateContainer.appendChild(dayDiv);
             tempDate.setDate(tempDate.getDate() + 1);
@@ -24,36 +33,58 @@ document.addEventListener('DOMContentLoaded', function() {
         prevWeek.disabled = currentDate <= new Date();
     }
 
-    function fetchAvailableTimes(date) {
+
+
+    function fetchOpeningHoursAndAbsences(date) {
         fetch(`/get-opening-hours/${date}`)
             .then(response => response.json())
             .then(data => {
-                displayAvailableTimes(data, date);
+                // Si le tableau businessHours est vide, afficher un message
+
+                if (data.businessHours.length === 0) {
+                    availableTimesContainer.innerHTML = '<p>Aucunes disponibilités pour ce jour</p>';
+                } else {
+                    // Sinon, afficher les créneaux disponibles
+                    displayAvailableTimes(data.businessHours, data.absences, date);
+                }
+            })
+            .catch(error => {
+                console.error('Erreur lors de la récupération des disponibilités:', error);
+                availableTimesContainer.innerHTML = '<p>Erreur lors de la récupération des disponibilités.</p>';
             });
     }
 
-    function displayAvailableTimes(data, date) {
-        const availableTimesContainer = document.getElementById('availableTimes');
-        availableTimesContainer.innerHTML = '';
 
-        let openTime = moment(data.open, 'HH:mm');
-        const closeTime = moment(data.close, 'HH:mm');
 
-        while (openTime.isBefore(closeTime)) {
-            let timeSlotButton = document.createElement('button');
-            timeSlotButton.classList.add('time-slot');
-            timeSlotButton.textContent = openTime.format('HH:mm');
-            timeSlotButton.dataset.datetime = date + ' ' + openTime.format('HH:mm');
-            timeSlotButton.addEventListener('click', function() {
-                // Logique à exécuter lorsque l'utilisateur sélectionne un créneau
-                // Par exemple, afficher un formulaire de réservation ou enregistrer le choix
-            });
-            availableTimesContainer.appendChild(timeSlotButton);
-            openTime.add(30, 'minutes');
+    function displayAvailableTimes(businessHours, absences, selectedDate) {
+        availableTimesContainer.innerHTML = ''; // Nettoyer les créneaux précédemment affichés
+
+        businessHours.forEach(hour => {
+            let openTime = moment(hour.open, 'HH:mm');
+            const closeTime = moment(hour.close, 'HH:mm');
+
+            while (openTime.isBefore(closeTime)) {
+                // Créer et afficher le bouton pour le créneau disponible
+                const timeSlotButton = document.createElement('button');
+                timeSlotButton.className = 'time-slot btn btn-primary m-1';
+                timeSlotButton.textContent = openTime.format('HH:mm');
+                timeSlotButton.dataset.datetime = `${selectedDate} ${openTime.format('HH:mm')}`;
+                timeSlotButton.addEventListener('click', function() {
+                    // Ici, vous pouvez ajouter la logique pour gérer la sélection d'un créneau
+                    console.log(`Créneau sélectionné : ${this.dataset.datetime}`);
+                    // Par exemple, sauvegarder la sélection, afficher une modale, etc.
+                });
+                availableTimesContainer.appendChild(timeSlotButton);
+
+                openTime.add(30, 'minutes'); // Passer au créneau suivant
+            }
+        });
+
+        // Si aucun bouton n'est créé, cela signifie qu'il n'y a pas de créneaux disponibles
+        if (availableTimesContainer.children.length === 0) {
+            availableTimesContainer.innerHTML = '<p>Aucunes disponibilités pour ce jour</p>';
         }
     }
-
-
 
     prevWeek.addEventListener('click', function() {
         currentDate.setDate(currentDate.getDate() - 7);

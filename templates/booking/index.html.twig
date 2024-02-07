@@ -3,7 +3,15 @@
 {% block title %}Réserver{% endblock %}
 
 {% block content %}
-    <div id="dateSelector">
+
+
+    <div id="prestations">
+        {% for prestation in prestations %}
+            <button class="prestation-btn" data-duration="{{ prestation.duration }}" data-id="{{ prestation.id }}">{{ prestation.name }}</button>
+        {% endfor %}
+    </div>
+
+    <div id="dateSelector" style="display:none;">
         <button id="prevWeek">« Semaine Précédente</button>
         <div id="dateContainer" style="display: flex; overflow-x: auto;"></div>
         <button id="nextWeek">Semaine Suivante »</button>
