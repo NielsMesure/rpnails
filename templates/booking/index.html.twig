@@ -5,20 +5,41 @@
 {% block content %}
 
 
-    <div id="prestations">
-        {% for prestation in prestations %}
-            <button class="prestation-btn" data-duration="{{ prestation.duration }}" data-id="{{ prestation.id }}">{{ prestation.name }}</button>
-        {% endfor %}
-    </div>
+    <div class="container">
+        <div class="row">
+            <h2 class="mb-5"> Choisissez votre prestation</h2>
+            <div id="prestations">
+                {% for prestation in prestations %}
+                    <button class="prestation-btn pushable mt-2" data-duration="{{ prestation.duration }}" data-id="{{ prestation.id }}">
 
-    <div id="dateSelector" style="display:none;">
-        <button id="prevWeek">« Semaine Précédente</button>
-        <div id="dateContainer" style="display: flex; overflow-x: auto;"></div>
-        <button id="nextWeek">Semaine Suivante »</button>
-    </div>
+                        <span class="shadow"></span>
+                        <span class="edge"></span>
+                        <span class="front">
+                            {{ prestation.name }}
+                        </span>
+                    </button>
+                {% endfor %}
+            </div>
+        </div>
 
-    <div id="availableTimes">
-        <!-- Les créneaux horaires disponibles seront affichés ici -->
-    </div>
+        <div class="row ">
+            <div id="dateSelector" style="display:none; justify-content: center; align-items: center;" class="mt-4">
+                <button id="prevWeek" >
+                    <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" fill="currentColor" class="bi bi-arrow-left-square-fill" viewBox="0 0 16 16">
+                        <path d="M16 14a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2zm-4.5-6.5H5.707l2.147-2.146a.5.5 0 1 0-.708-.708l-3 3a.5.5 0 0 0 0 .708l3 3a.5.5 0 0 0 .708-.708L5.707 8.5H11.5a.5.5 0 0 0 0-1"/>
+                    </svg>
+                </button>
+                <div id="dateContainer"  style="overflow-x: auto;"></div>
+                <button id="nextWeek" ><svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" fill="currentColor" class="bi bi-arrow-right-square-fill" viewBox="0 0 16 16">
+                        <path d="M0 14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2a2 2 0 0 0-2 2zm4.5-6.5h5.793L8.146 5.354a.5.5 0 1 1 .708-.708l3 3a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708-.708L10.293 8.5H4.5a.5.5 0 0 1 0-1"/>
+                    </svg>
+                </button>
+            </div>
 
+            <div id="availableTimes" class="text-center mt-4">
+                <!-- Les créneaux horaires disponibles seront affichés ici -->
+            </div>
+        </div>
+
+    </div>
 {% endblock %}

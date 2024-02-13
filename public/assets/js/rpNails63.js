@@ -11,7 +11,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const duration = this.dataset.duration;
             // Stockez la durée ou l'ID de la prestation selon le besoin
             // Affichez les sélecteurs de date et les créneaux
-            document.getElementById('dateSelector').style.display = 'block';
+            document.getElementById('dateSelector').style.display = 'flex';
             // Peut-être initialiser le calendrier ici ou faire d'autres actions
         });
     });
@@ -20,10 +20,11 @@ document.addEventListener('DOMContentLoaded', function() {
         dateContainer.innerHTML = '';
         let tempDate = new Date(currentDate);
 
-        for (let i = 0; i < 7; i++) {
+        for (let i = 0; i < 5; i++) {
             let dayDiv = document.createElement('div');
             dayDiv.textContent = `${tempDate.getDate()}/${tempDate.getMonth() + 1}`;
             dayDiv.dataset.date = tempDate.toISOString().split('T')[0];
+            dayDiv.className = 'day-slot btn m-1';
             dayDiv.addEventListener('click', function() {
                 fetchOpeningHoursAndAbsences(this.dataset.date);
             });
@@ -31,6 +32,13 @@ document.addEventListener('DOMContentLoaded', function() {
             tempDate.setDate(tempDate.getDate() + 1);
         }
         prevWeek.disabled = currentDate <= new Date();
+
+        let thirtyDaysFromNow = new Date();
+        thirtyDaysFromNow.setDate(thirtyDaysFromNow.getDate() + 30);
+
+        // Désactiver le bouton "nextWeek" si currentDate dépasse thirtyDaysFromNow
+        nextWeek.disabled = currentDate > thirtyDaysFromNow;
+
     }
 
 
@@ -39,6 +47,12 @@ document.addEventListener('DOMContentLoaded', function() {
         fetch(`/get-opening-hours/${date}`)
             .then(response => response.json())
             .then(data => {
+                if (!data.businessHours || !data.absences) {
+                    console.error('La réponse du serveur ne contient pas les propriétés attendues.');
+                    availableTimesContainer.innerHTML = '<p>Erreur lors de la récupération des disponibilités.</p>';
+                    return;
+                }
+
                 // Si le tableau businessHours est vide, afficher un message
 
                 if (data.businessHours.length === 0) {
@@ -66,7 +80,7 @@ document.addEventListener('DOMContentLoaded', function() {
             while (openTime.isBefore(closeTime)) {
                 // Créer et afficher le bouton pour le créneau disponible
                 const timeSlotButton = document.createElement('button');
-                timeSlotButton.className = 'time-slot btn btn-primary m-1';
+                timeSlotButton.className = 'time-slot btn m-1';
                 timeSlotButton.textContent = openTime.format('HH:mm');
                 timeSlotButton.dataset.datetime = `${selectedDate} ${openTime.format('HH:mm')}`;
                 timeSlotButton.addEventListener('click', function() {
@@ -98,7 +112,3 @@ document.addEventListener('DOMContentLoaded', function() {
 
     fillDateContainer();
 });
-
-
-
-

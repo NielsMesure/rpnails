@@ -36,8 +36,6 @@ class BookingController extends AbstractController
         $dateTime = new \DateTime($date);
         $dayOfWeek = $dateTime->format('l'); // 'l' pour obtenir le nom complet du jour en anglais
 
-        // Utilisez la méthode convertDayToNumeric si nécessaire pour obtenir la représentation numérique ou textuelle du jour
-        $day = $this->convertDayToNumeric(strtolower($dayOfWeek));
 
         $businessHours = $businessHoursRepository->findBy([
             'day' => $dayOfWeek,
@@ -57,6 +55,7 @@ class BookingController extends AbstractController
         foreach ($absences as $absence) {
             // Similaire pour les absences, assurez-vous que la méthode renvoie quelque chose d'itérable
             $absencesFormatted[] = [
+                'id' => $absence->getId(),
                 'start' => $absence->getStartTime() ? $absence->getStartTime()->format('H:i') : null,
                 'end' => $absence->getEndTime() ? $absence->getEndTime()->format('H:i') : null,
                 'allDay' => $absence->isFullDay(),
@@ -69,10 +68,6 @@ class BookingController extends AbstractController
         ]);
     }
 
-    private function convertDayToNumeric($dayString) {
-        $days = ['sunday' => 0, 'monday' => 1, 'tuesday' => 2, 'wednesday' => 3, 'thursday' => 4 , 'friday' => 5,'saturday' => 6];
-        return $days[strtolower($dayString)] ?? null;
-    }
 
 
 
