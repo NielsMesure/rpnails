@@ -89,6 +89,9 @@ document.addEventListener('DOMContentLoaded', function() {
         return timeSlots;
     }
 
+
+
+
     function renderTimeSlots(timeSlots, date) {
         const availableTimesContainer = document.getElementById('availableTimes');
         availableTimesContainer.innerHTML = '';
