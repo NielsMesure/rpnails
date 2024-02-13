@@ -1,6 +1,5 @@
 document.addEventListener('DOMContentLoaded', function() {
     const dateContainer = document.getElementById('dateContainer');
-    const availableTimesContainer = document.getElementById('availableTimes');
     const prevWeek = document.getElementById('prevWeek');
     const nextWeek = document.getElementById('nextWeek');
 
