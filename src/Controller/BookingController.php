@@ -30,9 +30,8 @@ class BookingController extends AbstractController
      * @throws Exception
      */
     #[Route('/get-opening-hours/{date}', name: 'get_opening_hours')]
-    public function getOpeningHours($date, BusinessHoursRepository $businessHoursRepository,AbsenceRepository $absenceRepository): JsonResponse {
-        // Récupérer les horaires d'ouverture et de fermeture pour la date donnée
-        // Vous devrez adapter cette logique en fonction de votre modèle de données
+    public function getOpeningHours($date, BusinessHoursRepository $businessHoursRepository): JsonResponse {
+
         $dateTime = new \DateTime($date);
         $dayOfWeek = $dateTime->format('l'); // 'l' pour obtenir le nom complet du jour en anglais
 
@@ -50,12 +49,28 @@ class BookingController extends AbstractController
                 'close' => $businessHour->getEndTime()->format('H:i'),
             ];
         }
-        $absences = $absenceRepository->findByDate($dateTime);
-        $absencesFormatted = [];
+
+
+
+        return new JsonResponse([
+            'hours' => $hours,
+        ]);
+    }
+
+
+    /**
+     * @throws Exception
+     */
+    #[Route('/get-absences/{date}', name: 'get_absences')]
+    public function getAbsencesByDate($date, BusinessHoursRepository $businessHoursRepository,AbsenceRepository $absenceRepository): JsonResponse {
+
+        $dateObject = new \DateTime($date);
+        $absences = $absenceRepository->findBy(['date' => $dateObject]);
+
+
+        $absenceTimes = [];
         foreach ($absences as $absence) {
-            // Similaire pour les absences, assurez-vous que la méthode renvoie quelque chose d'itérable
-            $absencesFormatted[] = [
-                'id' => $absence->getId(),
+            $absenceTimes[] = [
                 'start' => $absence->getStartTime() ? $absence->getStartTime()->format('H:i') : null,
                 'end' => $absence->getEndTime() ? $absence->getEndTime()->format('H:i') : null,
                 'allDay' => $absence->isFullDay(),
@@ -63,11 +78,10 @@ class BookingController extends AbstractController
         }
 
         return new JsonResponse([
-            'businessHours' => $hours,
-            'absences' => $absencesFormatted,
+
+            'absences' => $absenceTimes,
         ]);
     }
-
 
 
 

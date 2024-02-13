@@ -44,59 +44,70 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
     function fetchOpeningHoursAndAbsences(date) {
-        fetch(`/get-opening-hours/${date}`)
-            .then(response => response.json())
-            .then(data => {
-                if (!data.businessHours || !data.absences) {
-                    console.error('La réponse du serveur ne contient pas les propriétés attendues.');
-                    availableTimesContainer.innerHTML = '<p>Erreur lors de la récupération des disponibilités.</p>';
-                    return;
-                }
-
-                // Si le tableau businessHours est vide, afficher un message
-
-                if (data.businessHours.length === 0) {
-                    availableTimesContainer.innerHTML = '<p>Aucunes disponibilités pour ce jour</p>';
-                } else {
-                    // Sinon, afficher les créneaux disponibles
-                    displayAvailableTimes(data.businessHours, data.absences, date);
-                }
+        Promise.all([
+            fetch(`/get-opening-hours/${date}`).then(response => response.json()),
+            fetch(`/get-absences/${date}`).then(response => response.json())
+        ])
+            .then(([openingHoursResponse, absencesResponse]) => {
+                const openingHours = openingHoursResponse.hours;
+                const absences = absencesResponse.absences;
+                const timeSlots = calculateAvailableTimeSlots(openingHours, absences);
+                renderTimeSlots(timeSlots, date);
             })
             .catch(error => {
-                console.error('Erreur lors de la récupération des disponibilités:', error);
-                availableTimesContainer.innerHTML = '<p>Erreur lors de la récupération des disponibilités.</p>';
+                console.error('Erreur lors de la récupération des données:', error);
             });
     }
 
-
-
-    function displayAvailableTimes(businessHours, absences, selectedDate) {
-        availableTimesContainer.innerHTML = ''; // Nettoyer les créneaux précédemment affichés
-
-        businessHours.forEach(hour => {
-            let openTime = moment(hour.open, 'HH:mm');
+    function calculateAvailableTimeSlots(openingHours, absences) {
+        const timeSlots = [];
+        openingHours.forEach(hour => {
+            const openTime = moment(hour.open, 'HH:mm');
             const closeTime = moment(hour.close, 'HH:mm');
 
             while (openTime.isBefore(closeTime)) {
-                // Créer et afficher le bouton pour le créneau disponible
-                const timeSlotButton = document.createElement('button');
-                timeSlotButton.className = 'time-slot btn m-1';
-                timeSlotButton.textContent = openTime.format('HH:mm');
-                timeSlotButton.dataset.datetime = `${selectedDate} ${openTime.format('HH:mm')}`;
-                timeSlotButton.addEventListener('click', function() {
-                    // Ici, vous pouvez ajouter la logique pour gérer la sélection d'un créneau
-                    console.log(`Créneau sélectionné : ${this.dataset.datetime}`);
-                    // Par exemple, sauvegarder la sélection, afficher une modale, etc.
-                });
-                availableTimesContainer.appendChild(timeSlotButton);
+                const slotStart = moment(openTime);
+                const slotEnd = moment(openTime).add(30, 'minutes');
+                let isAvailable = true;
 
-                openTime.add(30, 'minutes'); // Passer au créneau suivant
+                absences.forEach(absence => {
+                    const absenceStart = moment(absence.start, 'HH:mm');
+                    const absenceEnd = moment(absence.end, 'HH:mm');
+
+                    if (absence.allDay || (slotStart.isBefore(absenceEnd) && slotEnd.isAfter(absenceStart))) {
+                        isAvailable = false;
+                    }
+                });
+
+                if (isAvailable) {
+                    timeSlots.push(slotStart.format('HH:mm'));
+                }
+
+                openTime.add(30, 'minutes');
             }
         });
 
-        // Si aucun bouton n'est créé, cela signifie qu'il n'y a pas de créneaux disponibles
-        if (availableTimesContainer.children.length === 0) {
+        return timeSlots;
+    }
+
+    function renderTimeSlots(timeSlots, date) {
+        const availableTimesContainer = document.getElementById('availableTimes');
+        availableTimesContainer.innerHTML = '';
+
+        if (timeSlots.length === 0) {
             availableTimesContainer.innerHTML = '<p>Aucunes disponibilités pour ce jour</p>';
+        } else {
+            timeSlots.forEach(slot => {
+                const timeSlotButton = document.createElement('button');
+                timeSlotButton.className = 'time-slot btn btn-primary m-1';
+                timeSlotButton.textContent = slot;
+                timeSlotButton.dataset.datetime = `${date} ${slot}`;
+                timeSlotButton.addEventListener('click', function() {
+                    console.log(`Créneau sélectionné : ${this.dataset.datetime}`);
+                    // Ajoutez ici votre logique de réservation
+                });
+                availableTimesContainer.appendChild(timeSlotButton);
+            });
         }
     }
 
