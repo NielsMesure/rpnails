@@ -2,12 +2,18 @@ document.addEventListener('DOMContentLoaded', function() {
     const dateContainer = document.getElementById('dateContainer');
     const prevWeek = document.getElementById('prevWeek');
     const nextWeek = document.getElementById('nextWeek');
-
+    const bookingModal = new bootstrap.Modal(document.getElementById('bookingModal'));
+    const bookingForm = document.getElementById('bookingForm');
+    let selectedServiceDuration;
+    let selectedService;
+    let selectedDate;
+    let selectedTime;
     let currentDate = new Date();
 
     document.querySelectorAll('.prestation-btn').forEach(button => {
         button.addEventListener('click', function() {
-            const duration = this.dataset.duration;
+            selectedServiceDuration = this.dataset.duration;
+            selectedService = this.dataset.name;
             // Stockez la durée ou l'ID de la prestation selon le besoin
             // Affichez les sélecteurs de date et les créneaux
             document.getElementById('dateSelector').style.display = 'flex';
@@ -103,7 +109,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 const timeSlotButton = document.createElement('button');
                 timeSlotButton.className = 'time-slot btn btn-primary m-1';
                 timeSlotButton.textContent = slot;
-                timeSlotButton.dataset.datetime = `${date} ${slot}`;
+                selectedDate = `${date} `;
+                selectedTime = ` ${slot}`;
                 timeSlotButton.addEventListener('click', function() {
                     console.log(`Créneau sélectionné : ${this.dataset.datetime}`);
                     // Ajoutez ici votre logique de réservation
@@ -111,6 +118,30 @@ document.addEventListener('DOMContentLoaded', function() {
                 availableTimesContainer.appendChild(timeSlotButton);
             });
         }
+
+        document.querySelectorAll('.time-slot').forEach(slot => {
+            slot.addEventListener('click', function() {
+
+                // Vérifiez si l'utilisateur est connecté
+                if (userIsLoggedIn()) {
+                    // Préremplir le formulaire avec les informations de l'utilisateur
+                    document.getElementById('bookingDate').value = selectedDate;
+                    document.getElementById('bookingTime').value = selectedTime;
+                    document.getElementById('serviceDuration').value = selectedServiceDuration;
+                    document.getElementById('service').value = selectedService;
+
+                    // Afficher la modale avec le formulaire prérempli
+                    bookingModal.show();
+                } else {
+                    // Redirigez vers la page de connexion si l'utilisateur n'est pas connecté
+                    window.location.href = '/login';
+                }
+            });
+        });
+    }
+
+    function userIsLoggedIn() {
+        return document.cookie.split('; ').some((item) => item.trim().startsWith('isLoggedIn=true'));
     }
 
     prevWeek.addEventListener('click', function() {

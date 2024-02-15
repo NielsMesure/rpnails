@@ -47,6 +47,8 @@ class LoginFormAuthenticator extends AbstractLoginFormAuthenticator
         if ($targetPath = $this->getTargetPath($request->getSession(), $firewallName)) {
             return new RedirectResponse($targetPath);
         }
+        setcookie("isLoggedIn", "true", time() + 3600, "/");
+
 
         // For example:
         return new RedirectResponse($this->urlGenerator->generate('app_account'));

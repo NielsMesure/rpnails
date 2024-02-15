@@ -42,40 +42,42 @@
         </div>
 
         <!-- Modale de réservation -->
-        <div class="modal fade" id="bookingModal" tabindex="-1" aria-labelledby="bookingModalLabel" aria-hidden="true">
+        <div class="modal" id="bookingModal" tabindex="-1" aria-labelledby="bookingModalLabel" aria-hidden="true">
             <div class="modal-dialog">
-                <div class="modal-content">
+                <div class="modal-content booking-modal">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="bookingModalLabel">Confirmation de Réservation</h5>
+                        <h5 class="modal-title" id="bookingModalLabel">Confirmation de réservation</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
-                        <!-- Formulaire de réservation -->
                         <form id="bookingForm">
-                            <input type="hidden" id="selectedDate" name="selectedDate">
-                            <input type="hidden" id="selectedTime" name="selectedTime">
-                            <input type="hidden" id="prestationDuration" name="prestationDuration">
-                            <!-- Ajoutez ici d'autres champs si nécessaire -->
-
-                            <!-- Vous pouvez ajouter des champs pour le nom et le prénom ou afficher le formulaire de connexion -->
+                            <input   id="bookingDate" name="date" />
+                            <input  id="bookingTime" name="time" />
+                            <div class="mb-3">
+                                <label for="service" class="form-label">Prestation</label>
+                                <input type="text" class="form-control" id="service" disabled>
+                            </div>
+                            <div class="mb-3">
+                                <label for="serviceDuration" class="form-label">Durée</label>
+                                <input type="text" class="form-control" id="serviceDuration" disabled>
+                            </div>
                             <div class="mb-3">
                                 <label for="customerName" class="form-label">Nom</label>
-                                <input type="text" class="form-control" id="customerName" name="customerName">
+                                <input type="text" class="form-control" id="customerName" value="{% if app.user %}{{ app.user.lastname }}{% endif%}" required>
                             </div>
                             <div class="mb-3">
                                 <label for="customerSurname" class="form-label">Prénom</label>
-                                <input type="text" class="form-control" id="customerSurname" name="customerSurname">
+                                <input type="text" class="form-control" id="customerSurname" value="{% if app.user %}{{ app.user.firstname }}{% endif%}" required>
                             </div>
-                            <!-- ... -->
+                            <!-- Ajoutez d'autres champs si nécessaire -->
+
+                            <button type="submit" class="btn btn-primary">Confirmer la réservation</button>
                         </form>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
-                        <button type="submit" form="bookingForm" class="btn btn-primary">Confirmer la Réservation</button>
                     </div>
                 </div>
             </div>
         </div>
+
 
     </div>
 {% endblock %}
