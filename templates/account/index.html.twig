@@ -5,29 +5,42 @@
     <div class="container">
         <div class="row">
             <h1>Prochaines réservations</h1>
-
             <div class="row row-cols-1 row-cols-md-3 g-4">
-            {% for booking in bookings %}
-                <div class="col">
-                    <div class="card h-100">
-                        <img src="{{ asset('uploads/logo/Booking_Nails.png') }}" class="card-img-top" alt="...">
-                        <div class="card-body">
-                            <h5 class="card-title">{{ booking.prestation.name }}</h5>
-                            <p class="card-text">This is a longer card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
+                {% for booking in bookings %}
+                    {% set bookingDateTime = booking.date | date('d F Y')%}
+                    {% if bookingDateTime > "now"|date('d F Y') %}
+                        <div class="col">
+                            <div class="card w-75">
+                                <div class="card-body">
+                                    <h5 class="card-title">{{ booking.prestation.name }}</h5>
+                                    <p class="card-text">Date : <span>{{ booking.date | date('d F Y')}}</span></p>
+                                    <p class="card-text">Heure : {{ booking.startTime | date('H:i')}}</p>
+                                </div>
+                            </div>
                         </div>
-                    </div>
-                </div>
-            {% endfor %}
+                    {% endif %}
+                {% endfor %}
             </div>
         </div>
         <div class="row">
-            <h1>Réservations passées </h1>
+            <h1>Réservations passées</h1>
+            <div class="row row-cols-1 row-cols-md-3 g-4">
+                {% for booking in bookings %}
+                    {% set bookingDateTime = booking.date | date('d F Y')%}
+                    {% if bookingDateTime <= "now"|date('d F Y') %}
+                        <div class="col">
+                            <div class="card w-75">
+                                <div class="card-body">
+                                    <h5 class="card-title">{{ booking.prestation.name }}</h5>
+                                    <p class="card-text">Date : <span>{{ booking.date | date('d F Y')}}</span></p>
+                                    <p class="card-text">Heure : {{ booking.startTime | date('H:i')}}</p>
+                                </div>
+                            </div>
+                        </div>
+                    {% endif %}
+                {% endfor %}
+            </div>
         </div>
-
     </div>
-
-
-
-
-
 {% endblock %}
+
