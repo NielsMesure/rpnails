@@ -10,7 +10,7 @@
             <h2 class="mb-5"> Choisissez votre prestation</h2>
             <div id="prestations">
                 {% for prestation in prestations %}
-                    <button class="prestation-btn pushable mt-2" data-duration="{{ prestation.duration }}" data-id="{{ prestation.id }}">
+                    <button class="prestation-btn pushable mt-2" data-name="{{ prestation.name }}" data-duration="{{ prestation.duration }}" data-id="{{ prestation.id }}">
 
                         <span class="shadow"></span>
                         <span class="edge"></span>
@@ -51,15 +51,19 @@
                     </div>
                     <div class="modal-body">
                         <form id="bookingForm">
-                            <input   id="bookingDate" name="date" />
-                            <input  id="bookingTime" name="time" />
+                            <h4 class="text-center">Reservation du <span id="bookingDate"></span> à <span id="bookingTime"></span></h4>
+
+
+
+
+
                             <div class="mb-3">
-                                <label for="service" class="form-label">Prestation</label>
-                                <input type="text" class="form-control" id="service" disabled>
+                                <label for="serviceName" class="form-label">Prestation</label>
+                                <input type="text" class="form-control" id="serviceName" readonly>
                             </div>
                             <div class="mb-3">
                                 <label for="serviceDuration" class="form-label">Durée</label>
-                                <input type="text" class="form-control" id="serviceDuration" disabled>
+                                <input type="text" class="form-control" id="serviceDuration" readonly>
                             </div>
                             <div class="mb-3">
                                 <label for="customerName" class="form-label">Nom</label>

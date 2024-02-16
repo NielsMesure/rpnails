@@ -3,7 +3,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const prevWeek = document.getElementById('prevWeek');
     const nextWeek = document.getElementById('nextWeek');
     const bookingModal = new bootstrap.Modal(document.getElementById('bookingModal'));
-    const bookingForm = document.getElementById('bookingForm');
     let selectedServiceDuration;
     let selectedService;
     let selectedDate;
@@ -14,6 +13,7 @@ document.addEventListener('DOMContentLoaded', function() {
         button.addEventListener('click', function() {
             selectedServiceDuration = this.dataset.duration;
             selectedService = this.dataset.name;
+
             // Stockez la durée ou l'ID de la prestation selon le besoin
             // Affichez les sélecteurs de date et les créneaux
             document.getElementById('dateSelector').style.display = 'flex';
@@ -56,7 +56,7 @@ document.addEventListener('DOMContentLoaded', function() {
             .then(([openingHoursResponse, absencesResponse]) => {
                 const openingHours = openingHoursResponse.hours;
                 const absences = absencesResponse.absences;
-                const timeSlots = calculateAvailableTimeSlots(openingHours, absences);
+                const timeSlots = calculateAvailableTimeSlots(openingHours, absences, date); // Passez la date sélectionnée ici
                 renderTimeSlots(timeSlots, date);
             })
             .catch(error => {
@@ -64,28 +64,30 @@ document.addEventListener('DOMContentLoaded', function() {
             });
     }
 
-    function calculateAvailableTimeSlots(openingHours, absences) {
+    function calculateAvailableTimeSlots(openingHours, absences, selectedDate) {
         const timeSlots = [];
+        const now = moment();
+        const selectedMomentDate = moment(selectedDate, 'YYYY-MM-DD');
+
         openingHours.forEach(hour => {
-            const openTime = moment(hour.open, 'HH:mm');
-            const closeTime = moment(hour.close, 'HH:mm');
+            let openTime = moment(`${selectedDate} ${hour.open}`, 'YYYY-MM-DD HH:mm');
+            const closeTime = moment(`${selectedDate} ${hour.close}`, 'YYYY-MM-DD HH:mm');
 
             while (openTime.isBefore(closeTime)) {
-                const slotStart = moment(openTime);
-                const slotEnd = moment(openTime).add(30, 'minutes');
-                let isAvailable = true;
-
-                absences.forEach(absence => {
-                    const absenceStart = moment(absence.start, 'HH:mm');
-                    const absenceEnd = moment(absence.end, 'HH:mm');
-
-                    if (absence.allDay || (slotStart.isBefore(absenceEnd) && slotEnd.isAfter(absenceStart))) {
-                        isAvailable = false;
-                    }
-                });
+                let isAvailable = selectedMomentDate.isSameOrAfter(now, 'day') && (!selectedMomentDate.isSame(now, 'day') || now.isBefore(openTime, 'minute'));
 
                 if (isAvailable) {
-                    timeSlots.push(slotStart.format('HH:mm'));
+                    absences.forEach(absence => {
+                        const absenceStart = absence.start ? moment(`${selectedDate} ${absence.start}`, 'YYYY-MM-DD HH:mm') : null;
+                        const absenceEnd = absence.end ? moment(`${selectedDate} ${absence.end}`, 'YYYY-MM-DD HH:mm') : null;
+                        if (absence.allDay || (absenceStart && absenceEnd && (openTime.isBetween(absenceStart, absenceEnd) || openTime.isSame(absenceStart)))) {
+                            isAvailable = false;
+                        }
+                    });
+                }
+
+                if (isAvailable) {
+                    timeSlots.push(openTime.format('HH:mm'));
                 }
 
                 openTime.add(30, 'minutes');
@@ -93,7 +95,9 @@ document.addEventListener('DOMContentLoaded', function() {
         });
 
         return timeSlots;
+
     }
+
 
 
 
@@ -109,36 +113,32 @@ document.addEventListener('DOMContentLoaded', function() {
                 const timeSlotButton = document.createElement('button');
                 timeSlotButton.className = 'time-slot btn btn-primary m-1';
                 timeSlotButton.textContent = slot;
-                selectedDate = `${date} `;
-                selectedTime = ` ${slot}`;
+
                 timeSlotButton.addEventListener('click', function() {
-                    console.log(`Créneau sélectionné : ${this.dataset.datetime}`);
-                    // Ajoutez ici votre logique de réservation
+                    selectedDate = new Date(date + 'T' + slot);
+                    selectedTime = slot;
+                    if (userIsLoggedIn()) {
+                        // Afficher la modale avec les informations préremplies
+                        const formattedDate = selectedDate.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' });
+
+                        document.getElementById('bookingDate').textContent = selectedDate.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' });
+                        document.getElementById('bookingTime').textContent = selectedTime;
+                        document.getElementById('serviceDuration').value = selectedServiceDuration;
+                        document.getElementById('serviceName').value = selectedService;
+                        bookingModal.show();
+                    } else {
+                        // Redirigez vers la page de connexion si l'utilisateur n'est pas connecté
+                        window.location.href = '/login';
+                    }
                 });
                 availableTimesContainer.appendChild(timeSlotButton);
             });
         }
-
-        document.querySelectorAll('.time-slot').forEach(slot => {
-            slot.addEventListener('click', function() {
-
-                // Vérifiez si l'utilisateur est connecté
-                if (userIsLoggedIn()) {
-                    // Préremplir le formulaire avec les informations de l'utilisateur
-                    document.getElementById('bookingDate').value = selectedDate;
-                    document.getElementById('bookingTime').value = selectedTime;
-                    document.getElementById('serviceDuration').value = selectedServiceDuration;
-                    document.getElementById('service').value = selectedService;
-
-                    // Afficher la modale avec le formulaire prérempli
-                    bookingModal.show();
-                } else {
-                    // Redirigez vers la page de connexion si l'utilisateur n'est pas connecté
-                    window.location.href = '/login';
-                }
-            });
-        });
     }
+
+
+
+
 
     function userIsLoggedIn() {
         return document.cookie.split('; ').some((item) => item.trim().startsWith('isLoggedIn=true'));
