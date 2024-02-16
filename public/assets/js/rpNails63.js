@@ -2,10 +2,13 @@ document.addEventListener('DOMContentLoaded', function() {
     const dateContainer = document.getElementById('dateContainer');
     const prevWeek = document.getElementById('prevWeek');
     const nextWeek = document.getElementById('nextWeek');
+    const bookingForm = document.getElementById('bookingForm');
     const bookingModal = new bootstrap.Modal(document.getElementById('bookingModal'));
     let selectedServiceDuration;
     let selectedService;
+    let selectedServiceID;
     let selectedDate;
+    let bookingDate;
     let selectedTime;
     let currentDate = new Date();
 
@@ -13,6 +16,7 @@ document.addEventListener('DOMContentLoaded', function() {
         button.addEventListener('click', function() {
             selectedServiceDuration = this.dataset.duration;
             selectedService = this.dataset.name;
+            selectedService = this.dataset.id;
 
             // Stockez la durée ou l'ID de la prestation selon le besoin
             // Affichez les sélecteurs de date et les créneaux
@@ -116,6 +120,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
                 timeSlotButton.addEventListener('click', function() {
                     selectedDate = new Date(date + 'T' + slot);
+                    bookingDate = date;
                     selectedTime = slot;
                     if (userIsLoggedIn()) {
                         const durationInHoursAndMinutes = convertDuration(selectedServiceDuration);
@@ -160,4 +165,36 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     fillDateContainer();
+
+
+
+
+    bookingForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+
+        const formData = new FormData();
+        formData.append('prestationId', selectedService); // Assurez-vous d'avoir l'ID de la prestation
+        formData.append('date', bookingDate);
+        formData.append('startTime', selectedTime);
+        // Calculez et ajoutez 'endTime' basé sur 'startTime' et 'serviceDuration'
+        formData.append('customerName', document.getElementById('customerName').value);
+        formData.append('customerSurname', document.getElementById('customerSurname').value);
+        formData.append('customerPhone', document.getElementById('customerPhone').value);
+        formData.append('customerEmail', document.getElementById('customerEmail').value);
+
+        // Envoyez la requête
+        fetch('add/booking', {
+            method: 'POST',
+            body: formData
+        })
+            .then(response => response.json())
+            .then(data => {
+                // Gérez la réponse de succès ici, par exemple, affichez un message de confirmation
+                console.log('Réservation réussie', data);
+            })
+            .catch(error => {
+                console.error('Erreur lors de l’envoi de la réservation', error);
+            });
+    });
+
 });
