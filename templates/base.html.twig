@@ -1,6 +1,7 @@
 <!doctype html>
 <html lang="fr">
 <head>
+    <link rel="icon" type="image/x-icon" href="{{ asset('uploads/logo/favicon.ico') }}" />
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="description" content="RPNails63 site de prise de rdv">
@@ -8,7 +9,6 @@
     <title>{% block title %}RpNails63{% endblock %}</title>
     <link href="{{ asset('assets/css/bootstrap.min.css') }}" rel="stylesheet">
     <script src="{{ asset('assets/js/bootstrap.bundle.js') }}"></script>
-    <script src="{{ asset('assets/js/bootstrap.bundle.js.map') }}"></script>
     <link href="{{ asset('assets/css/rpNails63.css') }}" rel="stylesheet">
     <script src="{{ asset('assets/js/rpNails63.js') }}"></script>
     <script src="https://code.jquery.com/jquery-3.6.3.min.js"></script>
@@ -53,7 +53,7 @@
                                     </button>
                                     <ul class="dropdown-menu">
                                         <li><a class="dropdown-item" href="{{ path('app_account_password') }}">Mes Informations</a></li>
-                                        <li><a class="dropdown-item" href="#">Mes Réservations</a></li>
+                                        <li><a class="dropdown-item" href="{{ path('app_account') }}">Mes Réservations</a></li>
                                         {% if is_granted("ROLE_ADMIN") %}
                                             <li><a class="dropdown-item" aria-current="page" href="{{ path('admin') }}">Interface Admin</a></li>
                                             <li><a class="dropdown-item" aria-current="page" href="{{ path('app_calendar') }}">Calendrier</a></li>
