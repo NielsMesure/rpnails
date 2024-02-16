@@ -1,4 +1,5 @@
 
+
 body{
     color: #ffffff;
     background-color: #333333;
@@ -49,7 +50,7 @@ body{
 }
 
 input, .actual-edit-overlay {
-    -webkit-text-fill-color: #bbbbbb !important;
+    -webkit-text-fill-color: #bbbbbb;
 }
 
 input:-webkit-autofill,
@@ -454,7 +455,9 @@ details[open] .select:after {
     background-color: #a6a6a6;
 }
 
-
+.booking-form{
+    -webkit-text-fill-color: #0a0a0a!important;
+}
 
 .booking-modal{
     background-color: #555353;

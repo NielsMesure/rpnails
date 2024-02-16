@@ -118,13 +118,14 @@ document.addEventListener('DOMContentLoaded', function() {
                     selectedDate = new Date(date + 'T' + slot);
                     selectedTime = slot;
                     if (userIsLoggedIn()) {
+                        const durationInHoursAndMinutes = convertDuration(selectedServiceDuration);
                         // Afficher la modale avec les informations préremplies
                         const formattedDate = selectedDate.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' });
 
                         document.getElementById('bookingDate').textContent = selectedDate.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' });
                         document.getElementById('bookingTime').textContent = selectedTime;
-                        document.getElementById('serviceDuration').value = selectedServiceDuration;
-                        document.getElementById('serviceName').value = selectedService;
+                        document.getElementById('serviceDuration').textContent = durationInHoursAndMinutes;
+                        document.getElementById('serviceName').textContent = selectedService;
                         bookingModal.show();
                     } else {
                         // Redirigez vers la page de connexion si l'utilisateur n'est pas connecté
@@ -136,7 +137,11 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-
+    function convertDuration(durationInMinutes) {
+        const hours = Math.floor(durationInMinutes / 60);
+        const minutes = durationInMinutes % 60;
+        return `${hours} heure(s) et ${minutes} minute(s)`;
+    }
 
 
 

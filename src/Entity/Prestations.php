@@ -27,10 +27,14 @@ class Prestations
     #[ORM\Column]
     private ?int $duration = null;
 
+    #[ORM\OneToMany(mappedBy: 'prestation', targetEntity: Booking::class)]
+    private Collection $bookings;
+
     public function __construct()
     {
         $this->bookings = new ArrayCollection();
     }
+
 
 
     public function getId(): ?int
@@ -75,6 +79,33 @@ class Prestations
         return $this;
     }
 
+    /**
+     * @return Collection<int, Booking>
+     */
+    public function getBookings(): Collection
+    {
+        return $this->bookings;
+    }
 
+    public function addBooking(Booking $booking): static
+    {
+        if (!$this->bookings->contains($booking)) {
+            $this->bookings->add($booking);
+            $booking->setPrestation($this);
+        }
 
+        return $this;
+    }
+
+    public function removeBooking(Booking $booking): static
+    {
+        if ($this->bookings->removeElement($booking)) {
+            // set the owning side to null (unless already changed)
+            if ($booking->getPrestation() === $this) {
+                $booking->setPrestation(null);
+            }
+        }
+
+        return $this;
+    }
 }
