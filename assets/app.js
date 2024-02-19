@@ -27,6 +27,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     absences.forEach(absence => {
                         // Extraire uniquement la partie date
                         const datePart = absence.start.split(' ')[0];
+
                         absencesMap[datePart] = absence.id;
                     });
                     initializeCalendar(businessHoursData);
@@ -70,6 +71,18 @@ document.addEventListener('DOMContentLoaded', function() {
                 document.getElementById('absenceDate').value = dateStr;
             },
             events: '/get-absences',
+            eventClick: function(info) {
+                // Exemple de récupération des détails de l'événement
+                var eventStart = info.event.start.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+                var eventEnd = info.event.end ? info.event.end.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }) : 'Non spécifié';
+
+                // Mise à jour du contenu de la modale
+                document.getElementById('absenceDetail').innerHTML = `Début: ${eventStart}<br>Fin: ${eventEnd}`;
+
+                // Affichage de la modale
+                var modal = new bootstrap.Modal(document.getElementById('absenceDetailModal'));
+                modal.show();
+            }
         });
 
         calendar.render();
