@@ -225,6 +225,7 @@ document.addEventListener('DOMContentLoaded', function() {
             .then(data => {
                 // Gérez la réponse de succès ici, par exemple, affichez un message de confirmation
                 console.log('Réservation réussie', data);
+                window.location.href = '/monCompte';
             })
             .catch(error => {
                 console.error('Erreur lors de l’envoi de la réservation', error);
