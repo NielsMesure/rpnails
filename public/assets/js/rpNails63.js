@@ -6,7 +6,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const bookingModal = new bootstrap.Modal(document.getElementById('bookingModal'));
     let selectedServiceDuration;
     let selectedService;
-    let selectedServiceID;
+    let selectedServiceName;
     let selectedDate;
     let bookingDate;
     let selectedTime;
@@ -15,7 +15,7 @@ document.addEventListener('DOMContentLoaded', function() {
     document.querySelectorAll('.prestation-btn').forEach(button => {
         button.addEventListener('click', function() {
             selectedServiceDuration = this.dataset.duration;
-            selectedService = this.dataset.name;
+            selectedServiceName = this.dataset.name;
             selectedService = this.dataset.id;
 
             // Stockez la durée ou l'ID de la prestation selon le besoin
@@ -130,7 +130,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         document.getElementById('bookingDate').textContent = selectedDate.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' });
                         document.getElementById('bookingTime').textContent = selectedTime;
                         document.getElementById('serviceDuration').textContent = durationInHoursAndMinutes;
-                        document.getElementById('serviceName').textContent = selectedService;
+                        document.getElementById('serviceName').textContent = selectedServiceName;
                         bookingModal.show();
                     } else {
                         // Redirigez vers la page de connexion si l'utilisateur n'est pas connecté
