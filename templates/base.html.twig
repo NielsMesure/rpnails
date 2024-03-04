@@ -57,6 +57,7 @@
                                         {% if is_granted("ROLE_ADMIN") %}
                                             <li><a class="dropdown-item" aria-current="page" href="{{ path('admin') }}">Interface Admin</a></li>
                                             <li><a class="dropdown-item" aria-current="page" href="{{ path('app_calendar') }}">Calendrier</a></li>
+                                            <li><a class="dropdown-item" aria-current="page" href="{{ path('app_contact') }}">Contacts</a></li>
                                         {% endif %}
                                         <li><a class="dropdown-item custom-logout" href="{{ path('app_logout') }}">Déconnexion</a></li>
                                     </ul>
