@@ -26,6 +26,9 @@ class SearchType extends AbstractType
             ])
             ->add('submit', SubmitType::class,[
                 'label'=>'Rechercher',
+                'attr'=>[
+                    'class'=>'custom-submit , mt-0',
+                ]
 
             ])
         ;
