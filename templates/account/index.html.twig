@@ -3,13 +3,15 @@
 
 {% block content %}
     <div class="container">
+        {% set futureBookings = bookings | filter(booking => booking.date|date('Y-m-d') > "now"|date('Y-m-d')) %}
+        {% set pastBookings = bookings | filter(booking => booking.date|date('Y-m-d') <= "now"|date('Y-m-d')) %}
+
+        {% if futureBookings|length > 0 %}
         <div class="row">
             <h1>Prochaines réservations</h1>
-            <div class="row row-cols-1 row-cols-md-3 g-4">
-                {% for booking in bookings %}
-                    {% set bookingDateTime = booking.date | date('d F Y')%}
-                    {% if bookingDateTime > "now"|date('d F Y') %}
-                        <div class="col">
+            <div class="row row-cols-1 row-cols-md-3 mt-3">
+                {% for booking in futureBookings %}
+                        <div class="col mb-2">
                             <div class="card w-75">
                                 <div class="card-body">
                                     <h5 class="card-title">{{ booking.prestation.name }}</h5>
@@ -18,17 +20,20 @@
                                 </div>
                             </div>
                         </div>
-                    {% endif %}
                 {% endfor %}
             </div>
-        </div>
-        <div class="row">
+            </div>
+        {% else %}
+            <p>Vous n'avez pas de futures réservations.</p>
+        {% endif %}
+
+
+        {% if pastBookings|length > 0 %}
+        <div class="row g-4">
             <h1>Réservations passées</h1>
-            <div class="row row-cols-1 row-cols-md-3 g-4">
-                {% for booking in bookings %}
-                    {% set bookingDateTime = booking.date | date('d F Y')%}
-                    {% if bookingDateTime <= "now"|date('d F Y') %}
-                        <div class="col">
+            <div class="row row-cols-1 row-cols-md-3 mt-3">
+                {% for booking in pastBookings %}
+                        <div class="col mb-2">
                             <div class="card w-75">
                                 <div class="card-body">
                                     <h5 class="card-title">{{ booking.prestation.name }}</h5>
@@ -37,9 +42,11 @@
                                 </div>
                             </div>
                         </div>
-                    {% endif %}
                 {% endfor %}
             </div>
+            {% else %}
+                <p class="mt-4">Vous n'avez pas de réservations passées.</p>
+            {% endif %}
         </div>
     </div>
 {% endblock %}

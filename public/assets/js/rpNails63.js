@@ -15,7 +15,7 @@ document.addEventListener('DOMContentLoaded', function() {
     document.querySelectorAll('.prestation-btn').forEach(button => {
         button.addEventListener('click', function() {
             selectedServiceDuration = this.dataset.duration;
-            selectedService = this.dataset.name;
+            selectedService = this.dataset.id;
             selectedServiceName = this.dataset.name;
 
             // Stockez la durée ou l'ID de la prestation selon le besoin
