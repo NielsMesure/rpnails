@@ -2,6 +2,7 @@
 
 namespace App\Repository;
 
+use App\Classe\Search;
 use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
@@ -37,6 +38,24 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         $user->setPassword($newHashedPassword);
         $this->getEntityManager()->persist($user);
         $this->getEntityManager()->flush();
+    }
+
+    /**
+     * ²
+     * @return User[]
+     */
+    public function findWithSearch(Search $search)
+    {
+        $query = $this
+            -> createQueryBuilder('u');
+
+        if (!empty($search->string)){
+            $query = $query
+                ->andWhere('u.firstname LIKE :string')
+                ->setParameter('string',"%{$search->string}%");
+        }
+
+        return $query->getQuery()->getResult();
     }
 
 //    /**
