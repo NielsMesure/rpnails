@@ -6,7 +6,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const bookingModal = new bootstrap.Modal(document.getElementById('bookingModal'));
     let selectedServiceDuration;
     let selectedService;
-    let selectedServiceID;
+    let selectedServiceName;
     let selectedDate;
     let bookingDate;
     let selectedTime;
@@ -16,7 +16,7 @@ document.addEventListener('DOMContentLoaded', function() {
         button.addEventListener('click', function() {
             selectedServiceDuration = this.dataset.duration;
             selectedService = this.dataset.name;
-            selectedService = this.dataset.id;
+            selectedServiceName = this.dataset.name;
 
             // Stockez la durée ou l'ID de la prestation selon le besoin
             // Affichez les sélecteurs de date et les créneaux
@@ -127,21 +127,50 @@ document.addEventListener('DOMContentLoaded', function() {
                         // Afficher la modale avec les informations préremplies
                         const formattedDate = selectedDate.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' });
 
-                        document.getElementById('bookingDate').textContent = selectedDate.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' });
+                        document.getElementById('bookingDateFormated').textContent = selectedDate.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' });
                         document.getElementById('bookingTime').textContent = selectedTime;
                         document.getElementById('serviceDuration').textContent = durationInHoursAndMinutes;
-                        document.getElementById('serviceName').textContent = selectedService;
+                        document.getElementById('serviceName').textContent = selectedServiceName;
                         bookingModal.show();
                     } else {
-                        // Redirigez vers la page de connexion si l'utilisateur n'est pas connecté
-                        window.location.href = '/login';
+                        localStorage.setItem('selectedServiceDuration', selectedServiceDuration);
+                        localStorage.setItem('selectedServiceName', selectedServiceName);
+                        localStorage.setItem('selectedService', selectedService);
+                        localStorage.setItem('selectedDateFormated', selectedDate);
+                        localStorage.setItem('selectedDate', bookingDate);
+                        localStorage.setItem('selectedTime', selectedTime);
+                        window.location.href = `/login?redirect=app_booking`;
                     }
                 });
                 availableTimesContainer.appendChild(timeSlotButton);
             });
         }
     }
+    if (localStorage.getItem('selectedService') && userIsLoggedIn()) {
+        // Retrieve and clear the saved selection
+        selectedServiceDuration = localStorage.getItem('selectedServiceDuration');
+        selectedServiceName = localStorage.getItem('selectedServiceName');
+        selectedService = localStorage.getItem('selectedService');
+        bookingDate = localStorage.getItem('selectedDate');
+        selectedDate = localStorage.getItem('selectedDateFormated');
+        selectedTime = localStorage.getItem('selectedTime');
 
+        // Clear the stored data
+        localStorage.removeItem('selectedServiceDuration');
+        localStorage.removeItem('selectedServiceName');
+        localStorage.removeItem('selectedService');
+        localStorage.removeItem('selectedDate');
+        localStorage.removeItem('selectedDateFormated');
+        localStorage.removeItem('selectedTime');
+
+        // Logic to open the modal with the retrieved selection
+        bookingModal.show();
+        console.log(selectedDate);
+        document.getElementById('bookingDateFormated').textContent = new Date(selectedDate).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' });
+        document.getElementById('bookingTime').textContent = selectedTime;
+        document.getElementById('serviceDuration').textContent = convertDuration(selectedServiceDuration);
+        document.getElementById('serviceName').textContent = selectedServiceName;
+    }
     function convertDuration(durationInMinutes) {
         const hours = Math.floor(durationInMinutes / 60);
         const minutes = durationInMinutes % 60;
@@ -191,6 +220,7 @@ document.addEventListener('DOMContentLoaded', function() {
             .then(data => {
                 // Gérez la réponse de succès ici, par exemple, affichez un message de confirmation
                 console.log('Réservation réussie', data);
+                window.location.href = '/monCompte';
             })
             .catch(error => {
                 console.error('Erreur lors de l’envoi de la réservation', error);

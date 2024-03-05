@@ -50,8 +50,8 @@ class LoginFormAuthenticator extends AbstractLoginFormAuthenticator
         setcookie("isLoggedIn", "true", time() + 3600, "/");
 
 
-        // For example:
-        return new RedirectResponse($this->urlGenerator->generate('app_account'));
+        $redirectUrl = $request->query->get('redirect', 'app_account');
+        return new RedirectResponse($this->urlGenerator->generate($redirectUrl));
 
     }
 
