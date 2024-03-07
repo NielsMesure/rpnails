@@ -9,15 +9,34 @@
         <div class="row">
             <h2 class="mb-5"> Choisissez votre prestation</h2>
             <div id="prestations">
-                {% for prestation in prestations %}
-                    <button class="prestation-btn pushable mt-2" data-name="{{ prestation.name }}" data-duration="{{ prestation.duration }}" data-id="{{ prestation.id }}">
-                        <span class="shadow"></span>
-                        <span class="edge"></span>
-                        <span class="front">
-                            {{ prestation.name }}
-                        </span>
-                    </button>
-                {% endfor %}
+                <div class="container text-center">
+                    <div class="row justify-content-center">
+
+                        {% for prestation in prestations %}
+                            <div class="col-md-6 col-lg-4 col-xxl-3 p-0">
+                                <div class="card card-booking m-auto" style="width: 18rem; ">
+                                    <div class="card-body ">
+                                        <h5 class="card-title" style="color: white">{{ prestation.name }}</h5>
+                                        {% set hours = (prestation.duration // 60) %}
+                                        {% set minutes = (prestation.duration % 60) %}
+                                        <p class="card-text" style="color: #BEBEBEFF">
+                                            Durée:
+                                            {% if hours > 0 %}
+                                                {{ hours }} heure(s)
+                                                {% if minutes > 0 %}
+                                                    et {{ minutes }} minute(s)
+                                                {% endif %}
+                                            {% else %}
+                                                {{ minutes }} minute(s)
+                                            {% endif %}
+                                        </p>
+                                        <button href="#" class="btn custom-submit prestation-btn" data-name="{{ prestation.name }}" data-duration="{{ prestation.duration }}" data-id="{{ prestation.id }}">Reserver</button>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
             </div>
         </div>
 
