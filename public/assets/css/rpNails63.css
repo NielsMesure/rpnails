@@ -77,7 +77,7 @@ select:-webkit-autofill {
 }
 
 .custom-submit{
-    color: #c5c3c3;
+    color: #ffffff;
     background-color: #777777;
     width: 100%;
     margin-top: 10px;
@@ -89,6 +89,11 @@ select:-webkit-autofill {
 .custom-availability-container{
     width: 30vw;
 }
+
+
+
+
+
 
 
 
@@ -469,7 +474,14 @@ details[open] .select:after {
 
 .card-booking{
     background-color: #555353;
-    border-radius: 10px;
+    border-radius: 10px; /* Coins arrondis */
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1); /* Ombre douce */
+    transition: transform 0.3s ease; /* Transition douce */
 }
+
+.card-booking:hover {
+    transform: translateY(-5px); /* Légère élévation au survol */
+}
+
 
 /*--------------------------------------------------------------------------------------------------------*/
