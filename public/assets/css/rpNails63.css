@@ -417,10 +417,14 @@ details[open] .select:after {
 }
 
 
+
+
+/*--------------------------------------------------------------------------------------------------------*/
+
+/*---------------------------------------------Booking----------------------------------------------------*/
 #dateSelector {
     justify-content: center;
     text-align: center;
-
 }
 
 #dateContainer div {
@@ -434,14 +438,17 @@ details[open] .select:after {
 }
 
 .day-slot{
+    border-radius: 10px; /* Coins arrondis */
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1); /* Ombre douce */
+    transition: transform 0.3s ease; /* Transition douce */
     background-color: #757575;
     color: white;
-    border-radius: 4px;
     border: 1px solid #646464;
 
 }
 
 .day-slot:hover {
+    transform: translateY(-4px); /* Légère élévation au survol */
     background-color: #a6a6a6;
 }
 
@@ -450,7 +457,7 @@ details[open] .select:after {
     padding: 10px;
     color: white;
     background-color: #757575;
-    border: 1px solid #ccc;
+    border: 1px solid #757575;
     border-radius: 4px;
     cursor: pointer;
     flex-wrap: wrap;
@@ -458,6 +465,7 @@ details[open] .select:after {
 
 .time-slot:hover {
     background-color: #a6a6a6;
+    border-color: #a6a6a6;
 }
 
 .booking-form{
@@ -467,10 +475,6 @@ details[open] .select:after {
 .booking-modal{
     background-color: #555353;
 }
-/*--------------------------------------------------------------------------------------------------------*/
-
-/*---------------------------------------------Booking----------------------------------------------------*/
-
 
 .card-booking{
     background-color: #555353;
@@ -480,8 +484,15 @@ details[open] .select:after {
 }
 
 .card-booking:hover {
-    transform: translateY(-5px); /* Légère élévation au survol */
+    transform: translateY(-10px); /* Légère élévation au survol */
 }
 
+
+#dateSelector {
+    display: none; /* Commencez par le cacher */
+    justify-content: center;
+    align-items: center;
+    /* Ajoutez d'autres styles pour le centrer ou l'ajuster selon vos besoins */
+}
 
 /*--------------------------------------------------------------------------------------------------------*/

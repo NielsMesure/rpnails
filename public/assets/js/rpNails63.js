@@ -18,11 +18,10 @@ document.addEventListener('DOMContentLoaded', function() {
             selectedService = this.dataset.id;
             selectedServiceName = this.dataset.name;
 
-            // Stockez la durée ou l'ID de la prestation selon le besoin
-            // Affichez les sélecteurs de date et les créneaux
             document.getElementById('dateSelector').style.display = 'flex';
-            // Peut-être initialiser le calendrier ici ou faire d'autres actions
+            document.getElementById('scroll-anchor').scrollIntoView({ behavior: 'smooth', block: 'center' });
         });
+
     });
 
     function fillDateContainer() {
@@ -41,11 +40,8 @@ document.addEventListener('DOMContentLoaded', function() {
             tempDate.setDate(tempDate.getDate() + 1);
         }
         prevWeek.disabled = currentDate <= new Date();
-
         let thirtyDaysFromNow = new Date();
         thirtyDaysFromNow.setDate(thirtyDaysFromNow.getDate() + 30);
-
-        // Désactiver le bouton "nextWeek" si currentDate dépasse thirtyDaysFromNow
         nextWeek.disabled = currentDate > thirtyDaysFromNow;
 
     }
@@ -203,7 +199,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         const formData = new FormData();
         formData.append('prestationId', selectedService); // Assurez-vous d'avoir l'ID de la prestation
-        formData.append('date', bookingDate);
+        formData.append('date', bookingDate); // Assurez-vous d'avoir la date de réservation
         formData.append('startTime', selectedTime);
         // Calculez et ajoutez 'endTime' basé sur 'startTime' et 'serviceDuration'
         formData.append('customerName', document.getElementById('customerName').value);
