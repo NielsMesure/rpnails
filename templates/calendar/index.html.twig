@@ -125,7 +125,7 @@
                         'sunday': 'Dimanche'
                     } %}
                         <div class="row day-schedule">
-                            <div class="col-lg-3 col-12  vertical-align-custom ">
+                            <div class="col-lg-3  vertical-align-custom ">
 
                                 <label class="checkbox-container">
                                     <input class="custom-checkbox" type="checkbox" name="days[{{ day }}][active]" value="1" checked>
@@ -133,7 +133,7 @@
                                     <span class="checkmark"></span>
                                 </label>
                             </div>
-                            <div class="col-lg-9 col-12  hours custom-center ">
+                            <div class="col-lg-9 mt-4 mt-md-0 hours custom-center ">
                                 De
                                 <select name="days[{{ day }}][startTime]" class="select" style="background-color: #716f6f; color: white">
                                     {% for hour in 8..23 %}
@@ -150,7 +150,27 @@
                                         {% endfor %}
                                     {% endfor %}
                                 </select>
+                                <div class="col-lg-9 mt-4 hours custom-center ">
+                                    Pause de
+                                    <select name="days[{{ day }}][breakStartTime]" class="select" style="background-color: #716f6f; color: white">
+                                        {% for hour in 11..15 %}
+                                            {% for minute in [0, 30] %}
+                                                <option value="{{ '%02d'|format(hour) }}:{{ '%02d'|format(minute) }}">{{ '%02d'|format(hour) }}:{{ '%02d'|format(minute) }}</option>
+                                            {% endfor %}
+                                        {% endfor %}
+                                    </select>
+                                    À
+                                    <select name="days[{{ day }}][breakEndTime]" class="select" style="background-color: #716f6f; color: white">
+                                        {% for hour in 11..15 %}
+                                            {% for minute in [0, 30] %}
+                                                <option value="{{ '%02d'|format(hour) }}:{{ '%02d'|format(minute) }}">{{ '%02d'|format(hour) }}:{{ '%02d'|format(minute) }}</option>
+                                            {% endfor %}
+                                        {% endfor %}
+                                    </select>
+                                </div>
                             </div>
+
+
                         </div>
                     {% endfor %}
 
