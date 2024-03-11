@@ -67,6 +67,7 @@ class AvailabilityController extends AbstractController
                     'daysOfWeek' => [$dayNumeric],
                     'startTime' => $entity->getStartTime()->format('H:i'),
                     'endTime' => $entity->getEndTime()->format('H:i'),
+
                 ];
             }
 

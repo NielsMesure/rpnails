@@ -74,9 +74,18 @@ document.addEventListener('DOMContentLoaded', function() {
         openingHours.forEach(hour => {
             let openTime = moment(`${selectedDate} ${hour.open}`, 'YYYY-MM-DD HH:mm');
             const closeTime = moment(`${selectedDate} ${hour.close}`, 'YYYY-MM-DD HH:mm');
+            let breakStart =  moment(`${selectedDate} ${hour.breakStart}`, 'YYYY-MM-DD HH:mm');
+            let breakEnd =  moment(`${selectedDate} ${hour.breakEnd}`, 'YYYY-MM-DD HH:mm');
+
+
 
             while (openTime.isBefore(closeTime)) {
                 let isAvailable = selectedMomentDate.isSameOrAfter(now, 'day') && (!selectedMomentDate.isSame(now, 'day') || now.isBefore(openTime, 'minute'));
+
+                if (breakStart && breakEnd && openTime.isBetween(breakStart, breakEnd, null, '[)')) {
+                    // Skip this time slot, it's during the break
+                    isAvailable = false;
+                }
 
                 if (isAvailable) {
                     absences.forEach(absence => {
