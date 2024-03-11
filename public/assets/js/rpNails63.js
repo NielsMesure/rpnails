@@ -19,7 +19,9 @@ document.addEventListener('DOMContentLoaded', function() {
             selectedServiceName = this.dataset.name;
 
             document.getElementById('dateSelector').style.display = 'flex';
-            document.getElementById('scroll-anchor').scrollIntoView({ behavior: 'smooth', block: 'center' });
+            const scrollAnchor = document.getElementById('scroll-anchor');
+            scrollAnchor.style.marginBottom = '-50vh';
+            scrollAnchor.scrollIntoView({ behavior: 'smooth', block: 'center' });
         });
 
     });
