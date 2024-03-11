@@ -19,7 +19,7 @@
                                             {% set hours = (prestation.duration // 60) %}
                                             {% set minutes = (prestation.duration % 60) %}
                                             <p class="card-text mt-3 mb-2" style="color: #E8E8E8FF">
-                                                Durée :
+                                                <strong>Durée : </strong>
                                                 {% if hours > 0 %}
                                                     {{ hours }} heure(s)
                                                     {% if minutes > 0 %}
@@ -29,8 +29,8 @@
                                                     {{ minutes }} minute(s)
                                                 {% endif %}
                                             </p>
-                                            <p class="card-text" style="color: #e8e8e8">
-                                                Prix : {{ prestation.price }} euros
+                                            <p class="card-text " style="color: #e8e8e8">
+                                                <strong>Prix : </strong> {{ prestation.price }} euros
                                             </p>
                                         </div>
                                         <button href="#" class="btn custom-submit prestation-btn mt-auto"  data-name="{{ prestation.name }}" data-duration="{{ prestation.duration }}" data-id="{{ prestation.id }}">Réserver</button>

@@ -113,7 +113,7 @@ document.addEventListener('DOMContentLoaded', function() {
         } else {
             timeSlots.forEach(slot => {
                 const timeSlotButton = document.createElement('button');
-                timeSlotButton.className = 'time-slot btn btn-primary m-1';
+                timeSlotButton.className = 'time-slot btn m-1';
                 timeSlotButton.textContent = slot;
 
                 timeSlotButton.addEventListener('click', function() {
