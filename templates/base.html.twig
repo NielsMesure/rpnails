@@ -48,10 +48,10 @@
                         <div class="nav_bar_button mb-2">
                             {% if app.user %}
                                 <div class="dropdown ">
-                                    <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <a class="btn custom-submit dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                                         Mon Compte
-                                    </button>
-                                    <ul class="dropdown-menu">
+                                    </a>
+                                    <ul class="dropdown-menu ">
                                         <li><a class="dropdown-item" href="{{ path('app_account_password') }}">Mes Informations</a></li>
                                         <li><a class="dropdown-item" href="{{ path('app_account') }}">Mes Réservations</a></li>
                                         {% if is_granted("ROLE_ADMIN") %}

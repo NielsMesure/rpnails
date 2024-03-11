@@ -3,25 +3,48 @@
 {% block title %}Réserver{% endblock %}
 
 {% block content %}
-
-
     <div class="container">
         <div class="row">
-            <h2 class="mb-5"> Choisissez votre prestation</h2>
+            <h2 class="mb-3"> Choisissez votre prestation</h2>
             <div id="prestations">
-                {% for prestation in prestations %}
-                    <button class="prestation-btn pushable mt-2" data-name="{{ prestation.name }}" data-duration="{{ prestation.duration }}" data-id="{{ prestation.id }}">
-                        <span class="shadow"></span>
-                        <span class="edge"></span>
-                        <span class="front">
-                            {{ prestation.name }}
-                        </span>
-                    </button>
-                {% endfor %}
+                <div class="container text-center">
+                    <div class="row justify-content-center">
+
+                        {% for prestation in prestations %}
+                            <div class="col-md-6 col-lg-4 col-xxl-3 p-0 mt-3">
+                                <div class="card card-booking m-auto shadow" style="width: 18rem; height: 12rem">
+                                    <div class="card-body d-flex flex-column justify-content-between"> <!-- Utilisez justify-content-between pour répartir également l'espace -->
+                                        <div>
+                                            <h5 class="card-title mt-2" style="color: white">{{ prestation.name }}</h5>
+                                            {% set hours = (prestation.duration // 60) %}
+                                            {% set minutes = (prestation.duration % 60) %}
+                                            <p class="card-text mt-3 mb-2" style="color: #E8E8E8FF">
+                                                <strong>Durée : </strong>
+                                                {% if hours > 0 %}
+                                                    {{ hours }} heure(s)
+                                                    {% if minutes > 0 %}
+                                                        et {{ minutes }} minute(s)
+                                                    {% endif %}
+                                                {% else %}
+                                                    {{ minutes }} minute(s)
+                                                {% endif %}
+                                            </p>
+                                            <p class="card-text " style="color: #e8e8e8">
+                                                <strong>Prix : </strong> {{ prestation.price }} euros
+                                            </p>
+                                        </div>
+                                        <button href="#" class="btn custom-submit prestation-btn mt-auto"  data-name="{{ prestation.name }}" data-duration="{{ prestation.duration }}" data-id="{{ prestation.id }}">Réserver</button>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
             </div>
         </div>
 
         <div class="row ">
+
             <div id="dateSelector" style="display:none; justify-content: center; align-items: center;" class="mt-4">
                 <button id="prevWeek" >
                     <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" fill="currentColor" class="bi bi-arrow-left-square-fill" viewBox="0 0 16 16">
@@ -38,6 +61,8 @@
             <div id="availableTimes" class="text-center mt-4">
                 <!-- Les créneaux horaires disponibles seront affichés ici -->
             </div>
+            <div id="scroll-anchor"></div>
+
         </div>
 
         <!-- Modale de réservation -->
@@ -79,7 +104,5 @@
                 </div>
             </div>
         </div>
-
-
     </div>
 {% endblock %}
