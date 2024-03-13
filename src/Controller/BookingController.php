@@ -91,6 +91,8 @@ class BookingController extends AbstractController
             $hours[] = [
                 'open' => $businessHour->getStartTime()->format('H:i'),
                 'close' => $businessHour->getEndTime()->format('H:i'),
+                'breakStart' => $businessHour->getBreakStartTime() ->format('H:i'),
+                'breakEnd' => $businessHour->getBreakEndTime() ->format('H:i'),
             ];
         }
 

@@ -26,6 +26,12 @@ class BusinessHours
     #[ORM\Column]
     private ?bool $isActive = null;
 
+    #[ORM\Column(type: Types::TIME_MUTABLE)]
+    private ?\DateTimeInterface $breakStartTime = null;
+
+    #[ORM\Column(type: Types::TIME_MUTABLE)]
+    private ?\DateTimeInterface $breakEndTime = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -75,6 +81,30 @@ class BusinessHours
     public function setIsActive(bool $isActive): static
     {
         $this->isActive = $isActive;
+
+        return $this;
+    }
+
+    public function getBreakStartTime(): ?\DateTimeInterface
+    {
+        return $this->breakStartTime;
+    }
+
+    public function setBreakStartTime(\DateTimeInterface $breakStartTime): static
+    {
+        $this->breakStartTime = $breakStartTime;
+
+        return $this;
+    }
+
+    public function getBreakEndTime(): ?\DateTimeInterface
+    {
+        return $this->breakEndTime;
+    }
+
+    public function setBreakEndTime(\DateTimeInterface $breakEndTime): static
+    {
+        $this->breakEndTime = $breakEndTime;
 
         return $this;
     }

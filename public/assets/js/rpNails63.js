@@ -1,4 +1,5 @@
 document.addEventListener('DOMContentLoaded', function() {
+
     const dateContainer = document.getElementById('dateContainer');
     const prevWeek = document.getElementById('prevWeek');
     const nextWeek = document.getElementById('nextWeek');
@@ -51,6 +52,10 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
     function fetchOpeningHoursAndAbsences(date) {
+        /**
+         * @property {date} absences
+         */
+
         Promise.all([
             fetch(`/get-opening-hours/${date}`).then(response => response.json()),
             fetch(`/get-absences/${date}`).then(response => response.json())
@@ -67,26 +72,45 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function calculateAvailableTimeSlots(openingHours, absences, selectedDate) {
+        /**
+         * @property {date} breakStart - Heure de début de la pause de midi
+         * @property {date} breakEnd - Heure de fin de la pause de midi
+         */
+
         const timeSlots = [];
         const now = moment();
         const selectedMomentDate = moment(selectedDate, 'YYYY-MM-DD');
 
+        // Récupérer la durée de la prestation depuis le localStorage
+        localStorage.setItem('selectedServiceDuration', selectedServiceDuration);
+        const serviceDuration = parseInt(localStorage.getItem('selectedServiceDuration'), 10);
+        console.log(serviceDuration); // Pour le débogage
+
         openingHours.forEach(hour => {
             let openTime = moment(`${selectedDate} ${hour.open}`, 'YYYY-MM-DD HH:mm');
             const closeTime = moment(`${selectedDate} ${hour.close}`, 'YYYY-MM-DD HH:mm');
+            const breakStart = hour.breakStart ? moment(`${selectedDate} ${hour.breakStart}`, 'YYYY-MM-DD HH:mm') : null;
+            const breakEnd = hour.breakEnd ? moment(`${selectedDate} ${hour.breakEnd}`, 'YYYY-MM-DD HH:mm') : null;
 
             while (openTime.isBefore(closeTime)) {
                 let isAvailable = selectedMomentDate.isSameOrAfter(now, 'day') && (!selectedMomentDate.isSame(now, 'day') || now.isBefore(openTime, 'minute'));
+                const slotEndTime = moment(openTime).add(serviceDuration, 'minutes');
 
-                if (isAvailable) {
-                    absences.forEach(absence => {
-                        const absenceStart = absence.start ? moment(`${selectedDate} ${absence.start}`, 'YYYY-MM-DD HH:mm') : null;
-                        const absenceEnd = absence.end ? moment(`${selectedDate} ${absence.end}`, 'YYYY-MM-DD HH:mm') : null;
-                        if (absence.allDay || (absenceStart && absenceEnd && (openTime.isBetween(absenceStart, absenceEnd) || openTime.isSame(absenceStart)))) {
-                            isAvailable = false;
-                        }
-                    });
+                // Vérifiez si le créneau est pendant la pause ou se termine après la fermeture
+                if (isAvailable && breakStart && breakEnd && (openTime.isBefore(breakEnd) && slotEndTime.isAfter(breakStart) || slotEndTime.isAfter(closeTime))) {
+                    isAvailable = false;
                 }
+
+                // Vérifiez les absences
+                absences.forEach(absence => {
+                    const absenceStart = moment(`${selectedDate} ${absence.start}`, 'YYYY-MM-DD HH:mm');
+                    const absenceEnd = moment(`${selectedDate} ${absence.end}`, 'YYYY-MM-DD HH:mm');
+
+                    // Assurez-vous que la période d'absence chevauche le créneau horaire potentiel
+                    if ((openTime.isSameOrBefore(absenceEnd) && slotEndTime.isSameOrAfter(absenceStart)) || absence.allDay) {
+                        isAvailable = false;
+                    }
+                });
 
                 if (isAvailable) {
                     timeSlots.push(openTime.format('HH:mm'));
@@ -97,8 +121,8 @@ document.addEventListener('DOMContentLoaded', function() {
         });
 
         return timeSlots;
-
     }
+
 
 
 

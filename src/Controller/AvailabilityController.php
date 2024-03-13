@@ -38,6 +38,14 @@ class AvailabilityController extends AbstractController
                 $businessHour->setEndTime(new \DateTime($info['endTime']));
             }
 
+            if (isset($info['breakStartTime'])) {
+            $businessHour->setBreakStartTime(new \DateTime($info['breakStartTime']));
+            }
+
+            if (isset($info['breakEndTime'])) {
+                $businessHour->setBreakEndTime(new \DateTime($info['breakEndTime']));
+            }
+
             $entityManager->persist($businessHour);
         }
 
@@ -59,6 +67,7 @@ class AvailabilityController extends AbstractController
                     'daysOfWeek' => [$dayNumeric],
                     'startTime' => $entity->getStartTime()->format('H:i'),
                     'endTime' => $entity->getEndTime()->format('H:i'),
+
                 ];
             }
 
