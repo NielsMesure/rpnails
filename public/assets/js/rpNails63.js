@@ -68,12 +68,14 @@ document.addEventListener('DOMContentLoaded', function() {
 
         Promise.all([
             fetch(`/get-opening-hours/${date}`).then(response => response.json()),
-            fetch(`/get-absences/${date}`).then(response => response.json())
+            fetch(`/get-absences/${date}`).then(response => response.json()),
+            fetch(`/get-bookings/${date}`).then(response => response.json()) // Nouvelle requête pour les réservations
         ])
-            .then(([openingHoursResponse, absencesResponse]) => {
+            .then(([openingHoursResponse, absencesResponse, bookingsResponse]) => {
                 const openingHours = openingHoursResponse.hours;
                 const absences = absencesResponse.absences;
-                const timeSlots = calculateAvailableTimeSlots(openingHours, absences, date); // Passez la date sélectionnée ici
+                const bookings = bookingsResponse.bookings; // Récupérer les réservations
+                const timeSlots = calculateAvailableTimeSlots(openingHours, absences, bookings, date); // Inclure les réservations dans le calcul
                 renderTimeSlots(timeSlots, date);
             })
             .catch(error => {
@@ -81,7 +83,7 @@ document.addEventListener('DOMContentLoaded', function() {
             });
     }
 
-    function calculateAvailableTimeSlots(openingHours, absences, selectedDate) {
+    function calculateAvailableTimeSlots(openingHours, absences, bookings, selectedDate) {
         /**
          * @property {date} breakStart - Heure de début de la pause de midi
          * @property {date} breakEnd - Heure de fin de la pause de midi
@@ -105,15 +107,28 @@ document.addEventListener('DOMContentLoaded', function() {
             while (openTime.isBefore(closeTime)) {
                 let isAvailable = selectedMomentDate.isSameOrAfter(now, 'day') && (!selectedMomentDate.isSame(now, 'day') || now.isBefore(openTime, 'minute'));
                 const slotEndTime = moment(openTime).add(serviceDuration, 'minutes');
-                if (isAvailable && breakStart && breakEnd && (openTime.isBefore(breakEnd) && slotEndTime.isAfter(breakStart) || slotEndTime.isAfter(closeTime))) {
+
+                // Check break time
+                if (breakStart && breakEnd && (openTime.isBefore(breakEnd) && slotEndTime.isAfter(breakStart) || slotEndTime.isAfter(closeTime))) {
                     isAvailable = false;
                 }
 
+                // Check absences
                 absences.forEach(absence => {
                     const absenceStart = moment(`${selectedDate} ${absence.start}`, 'YYYY-MM-DD HH:mm');
                     const absenceEnd = moment(`${selectedDate} ${absence.end}`, 'YYYY-MM-DD HH:mm');
 
                     if ((openTime.isSameOrBefore(absenceEnd) && slotEndTime.isSameOrAfter(absenceStart)) || absence.allDay) {
+                        isAvailable = false;
+                    }
+                });
+
+                // Check reservations
+                bookings.forEach(booking => {
+                    const bookingStart = moment(`${selectedDate} ${booking.start}`, 'YYYY-MM-DD HH:mm');
+                    const bookingEnd = moment(`${selectedDate} ${booking.end}`, 'YYYY-MM-DD HH:mm');
+
+                    if (openTime.isSameOrBefore(bookingEnd) && slotEndTime.isSameOrAfter(bookingStart)) {
                         isAvailable = false;
                     }
                 });
