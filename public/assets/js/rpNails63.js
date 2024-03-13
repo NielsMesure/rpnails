@@ -1,5 +1,4 @@
 document.addEventListener('DOMContentLoaded', function() {
-
     const dateContainer = document.getElementById('dateContainer');
     const prevWeek = document.getElementById('prevWeek');
     const nextWeek = document.getElementById('nextWeek');
@@ -27,11 +26,12 @@ document.addEventListener('DOMContentLoaded', function() {
 
     });
 
+    const DAYS_TO_DISPLAY = 4;
     function fillDateContainer() {
         dateContainer.innerHTML = '';
         let tempDate = new Date(currentDate);
 
-        for (let i = 0; i < 5; i++) {
+        for (let i = 0; i < DAYS_TO_DISPLAY; i++) {
             let dayDiv = document.createElement('div');
             dayDiv.textContent = `${tempDate.getDate()}/${tempDate.getMonth() + 1}`;
             dayDiv.dataset.date = tempDate.toISOString().split('T')[0];
@@ -48,7 +48,17 @@ document.addEventListener('DOMContentLoaded', function() {
         nextWeek.disabled = currentDate > thirtyDaysFromNow;
 
     }
+    prevWeek.addEventListener('click', function() {
+        currentDate.setDate(currentDate.getDate() - DAYS_TO_DISPLAY);
+        fillDateContainer();
+    });
 
+    nextWeek.addEventListener('click', function() {
+        currentDate.setDate(currentDate.getDate() + DAYS_TO_DISPLAY);
+        fillDateContainer();
+    });
+
+    fillDateContainer();
 
 
     function fetchOpeningHoursAndAbsences(date) {
@@ -95,18 +105,14 @@ document.addEventListener('DOMContentLoaded', function() {
             while (openTime.isBefore(closeTime)) {
                 let isAvailable = selectedMomentDate.isSameOrAfter(now, 'day') && (!selectedMomentDate.isSame(now, 'day') || now.isBefore(openTime, 'minute'));
                 const slotEndTime = moment(openTime).add(serviceDuration, 'minutes');
-
-                // Vérifiez si le créneau est pendant la pause ou se termine après la fermeture
                 if (isAvailable && breakStart && breakEnd && (openTime.isBefore(breakEnd) && slotEndTime.isAfter(breakStart) || slotEndTime.isAfter(closeTime))) {
                     isAvailable = false;
                 }
 
-                // Vérifiez les absences
                 absences.forEach(absence => {
                     const absenceStart = moment(`${selectedDate} ${absence.start}`, 'YYYY-MM-DD HH:mm');
                     const absenceEnd = moment(`${selectedDate} ${absence.end}`, 'YYYY-MM-DD HH:mm');
 
-                    // Assurez-vous que la période d'absence chevauche le créneau horaire potentiel
                     if ((openTime.isSameOrBefore(absenceEnd) && slotEndTime.isSameOrAfter(absenceStart)) || absence.allDay) {
                         isAvailable = false;
                     }
@@ -122,10 +128,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
         return timeSlots;
     }
-
-
-
-
 
 
     function renderTimeSlots(timeSlots, date) {
@@ -169,7 +171,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
     if (localStorage.getItem('selectedService') && userIsLoggedIn()) {
-        // Retrieve and clear the saved selection
         selectedServiceDuration = localStorage.getItem('selectedServiceDuration');
         selectedServiceName = localStorage.getItem('selectedServiceName');
         selectedService = localStorage.getItem('selectedService');
@@ -177,7 +178,7 @@ document.addEventListener('DOMContentLoaded', function() {
         selectedDate = localStorage.getItem('selectedDateFormated');
         selectedTime = localStorage.getItem('selectedTime');
 
-        // Clear the stored data
+        // Clear les données enregistrées
         localStorage.removeItem('selectedServiceDuration');
         localStorage.removeItem('selectedServiceName');
         localStorage.removeItem('selectedService');
@@ -185,7 +186,7 @@ document.addEventListener('DOMContentLoaded', function() {
         localStorage.removeItem('selectedDateFormated');
         localStorage.removeItem('selectedTime');
 
-        // Logic to open the modal with the retrieved selection
+        // Logique d'ouverture de la fenêtre modale avec la sélection récupérée
         bookingModal.show();
         console.log(selectedDate);
         document.getElementById('bookingDateFormated').textContent = new Date(selectedDate).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' });
@@ -199,48 +200,28 @@ document.addEventListener('DOMContentLoaded', function() {
         return `${hours} heure(s) et ${minutes} minute(s)`;
     }
 
-
-
     function userIsLoggedIn() {
         return document.cookie.split('; ').some((item) => item.trim().startsWith('isLoggedIn=true'));
     }
-
-    prevWeek.addEventListener('click', function() {
-        currentDate.setDate(currentDate.getDate() - 7);
-        fillDateContainer();
-    });
-
-    nextWeek.addEventListener('click', function() {
-        currentDate.setDate(currentDate.getDate() + 7);
-        fillDateContainer();
-    });
-
-    fillDateContainer();
-
-
-
 
     bookingForm.addEventListener('submit', function(e) {
         e.preventDefault();
 
         const formData = new FormData();
-        formData.append('prestationId', selectedService); // Assurez-vous d'avoir l'ID de la prestation
-        formData.append('date', bookingDate); // Assurez-vous d'avoir la date de réservation
+        formData.append('prestationId', selectedService);
+        formData.append('date', bookingDate);
         formData.append('startTime', selectedTime);
-        // Calculez et ajoutez 'endTime' basé sur 'startTime' et 'serviceDuration'
         formData.append('customerName', document.getElementById('customerName').value);
         formData.append('customerSurname', document.getElementById('customerSurname').value);
         formData.append('customerPhone', document.getElementById('customerPhone').value);
         formData.append('customerEmail', document.getElementById('customerEmail').value);
 
-        // Envoyez la requête
         fetch('add/booking', {
             method: 'POST',
             body: formData
         })
             .then(response => response.json())
             .then(data => {
-                // Gérez la réponse de succès ici, par exemple, affichez un message de confirmation
                 console.log('Réservation réussie', data);
                 window.location.href = '/monCompte';
             })
