@@ -2,12 +2,16 @@
 
 
 {% block content %}
-    <div class="container">
-        {# Filtrer et trier les futures réservations #}
-        {% set futureBookings = bookings | filter(booking => booking.date|date('Y-m-d') > "now"|date('Y-m-d')) | sort((a, b) => a.date <=> b.date) %}
 
-        {# Filtrer et trier les réservations passées #}
-        {% set pastBookings = bookings | filter(booking => booking.date|date('Y-m-d') <= "now"|date('Y-m-d')) | sort((a, b) => b.date <=> a.date) %}
+    <div class="container">
+        {# Déterminer la date et l'heure actuelles #}
+        {% set now = "now"|date('Y-m-d H:i', 'Europe/Paris') %}
+
+        {# Filtrer et trier les futures réservations en prenant en compte la date et l'heure #}
+        {% set futureBookings = bookings | filter(booking => (booking.date|date('Y-m-d') ~ ' ' ~ booking.startTime|date('H:i')) > now) | sort((a, b) => a.date <=> b.date) %}
+
+        {# Filtrer et trier les réservations passées en prenant en compte la date et l'heure #}
+        {% set pastBookings = bookings | filter(booking => (booking.date|date('Y-m-d') ~ ' ' ~ booking.startTime|date('H:i')) <= now) | sort((a, b) => b.date <=> a.date) %}
 
         {% if futureBookings|length > 0 %}
             <div class="row">
@@ -18,8 +22,8 @@
                             <div class="card w-75">
                                 <div class="card-body">
                                     <h5 class="card-title">{{ booking.prestation.name }}</h5>
-                                    <p class="card-text">Date : <span>{{ booking.date | date('d F Y')}}</span></p>
-                                    <p class="card-text">Heure : {{ booking.startTime | date('H:i')}}</p>
+                                    <p class="card-text">Date : <span>{{ booking.date | date('d F Y', 'Europe/Paris')}}</span></p>
+                                    <p class="card-text">Heure : {{ booking.startTime | date('H:i', 'Europe/Paris')}}</p>
                                 </div>
                             </div>
                         </div>
@@ -39,8 +43,8 @@
                             <div class="card w-75">
                                 <div class="card-body">
                                     <h5 class="card-title">{{ booking.prestation.name }}</h5>
-                                    <p class="card-text">Date : <span>{{ booking.date | date('d F Y')}}</span></p>
-                                    <p class="card-text">Heure : {{ booking.startTime | date('H:i')}}</p>
+                                    <p class="card-text">Date : <span>{{ booking.date | date('d F Y', 'Europe/Paris')}}</span></p>
+                                    <p class="card-text">Heure : {{ booking.startTime | date('H:i', 'Europe/Paris')}}</p>
                                 </div>
                             </div>
                         </div>
@@ -52,4 +56,5 @@
         {% endif %}
     </div>
 {% endblock %}
+
 
