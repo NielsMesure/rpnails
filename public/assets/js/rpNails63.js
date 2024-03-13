@@ -71,33 +71,39 @@ document.addEventListener('DOMContentLoaded', function() {
         const now = moment();
         const selectedMomentDate = moment(selectedDate, 'YYYY-MM-DD');
 
+        // Récupérer la durée de la prestation depuis le localStorage
+        localStorage.setItem('selectedServiceDuration', selectedServiceDuration);
+        const serviceDuration = parseInt(localStorage.getItem('selectedServiceDuration'), 10);
+        console.log(serviceDuration); // Pour le débogage
+
         openingHours.forEach(hour => {
             let openTime = moment(`${selectedDate} ${hour.open}`, 'YYYY-MM-DD HH:mm');
             const closeTime = moment(`${selectedDate} ${hour.close}`, 'YYYY-MM-DD HH:mm');
-            let breakStart =  moment(`${selectedDate} ${hour.breakStart}`, 'YYYY-MM-DD HH:mm');
-            let breakEnd =  moment(`${selectedDate} ${hour.breakEnd}`, 'YYYY-MM-DD HH:mm');
-
-
+            let breakStart = hour.breakStart ? moment(`${selectedDate} ${hour.breakStart}`, 'YYYY-MM-DD HH:mm') : null;
+            let breakEnd = hour.breakEnd ? moment(`${selectedDate} ${hour.breakEnd}`, 'YYYY-MM-DD HH:mm') : null;
 
             while (openTime.isBefore(closeTime)) {
+                // Créer un moment pour la fin du créneau en ajoutant la durée de la prestation à openTime
+                let slotEndTime = moment(openTime).add(serviceDuration, 'minutes');
+
                 let isAvailable = selectedMomentDate.isSameOrAfter(now, 'day') && (!selectedMomentDate.isSame(now, 'day') || now.isBefore(openTime, 'minute'));
 
-                if (breakStart && breakEnd && openTime.isBetween(breakStart, breakEnd, null, '[)')) {
-                    // Skip this time slot, it's during the break
+                // Vérifier les absences
+                absences.forEach(absence => {
+                    const absenceStart = absence.start ? moment(`${selectedDate} ${absence.start}`, 'YYYY-MM-DD HH:mm') : null;
+                    const absenceEnd = absence.end ? moment(`${selectedDate} ${absence.end}`, 'YYYY-MM-DD HH:mm') : null;
+                    if (absence.allDay || (absenceStart && absenceEnd && (openTime.isBetween(absenceStart, absenceEnd) || openTime.isSame(absenceStart) || slotEndTime.isBetween(absenceStart, absenceEnd)))) {
+                        isAvailable = false;
+                    }
+                });
+
+                // Vérifier la pause du midi
+                if (breakStart && breakEnd && (openTime.isBetween(breakStart, breakEnd) || slotEndTime.isBetween(breakStart, breakEnd) || openTime.isBefore(breakEnd) && slotEndTime.isAfter(breakStart))) {
                     isAvailable = false;
                 }
 
-                if (isAvailable) {
-                    absences.forEach(absence => {
-                        const absenceStart = absence.start ? moment(`${selectedDate} ${absence.start}`, 'YYYY-MM-DD HH:mm') : null;
-                        const absenceEnd = absence.end ? moment(`${selectedDate} ${absence.end}`, 'YYYY-MM-DD HH:mm') : null;
-                        if (absence.allDay || (absenceStart && absenceEnd && (openTime.isBetween(absenceStart, absenceEnd) || openTime.isSame(absenceStart)))) {
-                            isAvailable = false;
-                        }
-                    });
-                }
-
-                if (isAvailable) {
+                // Ajouter le créneau s'il est disponible
+                if (isAvailable && slotEndTime.isSameOrBefore(closeTime)) {
                     timeSlots.push(openTime.format('HH:mm'));
                 }
 
@@ -105,9 +111,10 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
 
+        console.log(timeSlots); // Pour le débogage
         return timeSlots;
-
     }
+
 
 
 
