@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Booking;
 use App\Entity\Prestations;
 use App\Repository\AbsenceRepository;
+use App\Repository\BookingRepository;
 use App\Repository\BusinessHoursRepository;
 use App\Repository\PrestationsRepository;
 use DateTime;
@@ -129,6 +130,20 @@ class BookingController extends AbstractController
         ]);
     }
 
+    #[Route('/get-bookings/{date}', name: 'get_bookings')]
+    public function getBookingsForDate(\DateTime $date, BookingRepository $bookingRepository): JsonResponse {
+        $bookings = $bookingRepository->findByDate($date);
+
+        $bookingsData = [];
+        foreach ($bookings as $booking) {
+            $bookingsData[] = [
+                'start' => $booking->getStartTime()->format('H:i'),
+                'end' => $booking->getEndTime()->format('H:i'),
+            ];
+        }
+
+        return new JsonResponse(['bookings' => $bookingsData]);
+    }
 
 
 
