@@ -1,5 +1,6 @@
 
 
+
 body{
     color: #ffffff;
     background-color: #333333;
@@ -87,7 +88,7 @@ select:-webkit-autofill {
 
 .custom-submit {
     color: #ffffff;
-    background-color: #777777;
+    background-color: #95b8d1;
     width: 100%;
     margin-top: 10px;
 }
