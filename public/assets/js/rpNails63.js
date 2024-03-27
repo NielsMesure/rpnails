@@ -1,7 +1,5 @@
 document.addEventListener('DOMContentLoaded', function() {
-    const dateContainer = document.getElementById('dateContainer');
-    const prevWeek = document.getElementById('prevWeek');
-    const nextWeek = document.getElementById('nextWeek');
+
     const bookingForm = document.getElementById('bookingForm');
     const bookingModal = new bootstrap.Modal(document.getElementById('bookingModal'));
     let selectedServiceDuration;
@@ -10,62 +8,72 @@ document.addEventListener('DOMContentLoaded', function() {
     let selectedDate;
     let bookingDate;
     let selectedTime;
-    let currentDate = new Date();
+
 
     document.querySelectorAll('.prestation-btn').forEach(button => {
         button.addEventListener('click', function() {
-            selectedServiceDuration = this.dataset.duration;
-            selectedService = this.dataset.id;
-            selectedServiceName = this.dataset.name;
+            selectedServiceDuration = this.getAttribute('data-duration'); // Stockez la durée de la prestation pour l'utiliser lors du calcul des créneaux disponibles
 
-            document.getElementById('dateSelector').style.display = 'flex';
-            const scrollAnchor = document.getElementById('scroll-anchor');
-            scrollAnchor.style.marginBottom = '-50vh';
-            scrollAnchor.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            // Affichez l'accordéon et le bouton "Voir plus"
+            document.getElementById('accordionFlushExample').style.display = '';
+            document.getElementById('loadMoreDays').style.display = '';
+            selectedServiceName = this.dataset.name;
+            selectedService = this.dataset.id;
+            fillDateContainer(selectedServiceDuration);
         });
 
     });
 
-    const DAYS_TO_DISPLAY = 4;
-    function fillDateContainer() {
-        dateContainer.innerHTML = '';
-        let tempDate = new Date(currentDate);
 
-        for (let i = 0; i < DAYS_TO_DISPLAY; i++) {
-            let dayDiv = document.createElement('div');
-            dayDiv.textContent = `${tempDate.getDate()}/${tempDate.getMonth() + 1}`;
-            dayDiv.dataset.date = tempDate.toISOString().split('T')[0];
-            dayDiv.className = 'day-slot btn m-1';
-            dayDiv.addEventListener('click', function() {
-                fetchOpeningHoursAndAbsences(this.dataset.date);
-            });
-            dateContainer.appendChild(dayDiv);
-            tempDate.setDate(tempDate.getDate() + 1);
+
+    let daysDisplayed = 0; // Variable globale pour suivre le nombre de jours déjà affichés
+
+    function fillDateContainer(serviceDuration, increment = false) {
+        const accordionContainer = document.getElementById('accordionFlushExample');
+
+        // Si increment est false, cela signifie que nous initialisons ou réinitialisons l'accordéon
+        if (!increment) {
+            accordionContainer.innerHTML = '';
+            daysDisplayed = 0;
         }
-        prevWeek.disabled = currentDate <= new Date();
-        let thirtyDaysFromNow = new Date();
-        thirtyDaysFromNow.setDate(thirtyDaysFromNow.getDate() + 30);
-        nextWeek.disabled = currentDate > thirtyDaysFromNow;
 
+        let daysToShow = 6; // Nombre de jours à ajouter à chaque appel
+        let tempDate = new Date();
+        tempDate.setDate(tempDate.getDate() + daysDisplayed); // Démarrez à partir du dernier jour affiché
+
+        for (let i = 0; i < daysToShow; i++) {
+            const dayString = tempDate.toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+            const isoDate = tempDate.toISOString().split('T')[0];
+
+            const accordionItem = document.createElement('div');
+            accordionItem.className = 'accordion-item';
+            accordionItem.innerHTML = `
+            <h2 class="accordion-header" id="flush-heading${daysDisplayed}">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapse${daysDisplayed}" aria-expanded="false" aria-controls="flush-collapse${daysDisplayed}">
+                    ${dayString}
+                </button>
+            </h2>
+            <div id="flush-collapse${daysDisplayed}" class="accordion-collapse collapse" aria-labelledby="flush-heading${daysDisplayed}" data-bs-parent="#accordionFlushExample">
+                <div class="accordion-body">
+                    <!-- Les créneaux horaires disponibles seront ajoutés ici par loadAvailableTimeSlots -->
+                </div>
+            </div>
+        `;
+            accordionContainer.appendChild(accordionItem);
+
+            loadAvailableTimeSlots(isoDate, serviceDuration, daysDisplayed);
+            tempDate.setDate(tempDate.getDate() + 1); // Préparez la date pour le prochain jour
+            daysDisplayed++; // Incrémente le compteur de jours affichés
+        }
     }
-    prevWeek.addEventListener('click', function() {
-        currentDate.setDate(currentDate.getDate() - DAYS_TO_DISPLAY);
-        fillDateContainer();
+
+// Modifiez le gestionnaire du bouton "Voir plus" pour appeler fillDateContainer avec increment = true
+    document.getElementById('loadMoreDays').addEventListener('click', function() {
+        fillDateContainer(selectedServiceDuration, true); // Passer true pour ajouter des jours sans réinitialiser
     });
 
-    nextWeek.addEventListener('click', function() {
-        currentDate.setDate(currentDate.getDate() + DAYS_TO_DISPLAY);
-        fillDateContainer();
-    });
 
-    fillDateContainer();
-
-
-    function fetchOpeningHoursAndAbsences(date) {
-        /**
-         * @property {date} absences
-         */
-
+    function loadAvailableTimeSlots(date, serviceDuration, accordionIndex) {
         Promise.all([
             fetch(`/get-opening-hours/${date}`).then(response => response.json()),
             fetch(`/get-absences/${date}`).then(response => response.json()),
@@ -75,13 +83,56 @@ document.addEventListener('DOMContentLoaded', function() {
                 const openingHours = openingHoursResponse.hours;
                 const absences = absencesResponse.absences;
                 const bookings = bookingsResponse.bookings; // Récupérer les réservations
-                const timeSlots = calculateAvailableTimeSlots(openingHours, absences, bookings, date); // Inclure les réservations dans le calcul
-                renderTimeSlots(timeSlots, date);
+                const timeSlots = calculateAvailableTimeSlots(openingHours, absences, bookings, date, serviceDuration); // Inclure les réservations dans le calcul
+
+                // Récupérez l'élément container pour les créneaux du jour concerné
+                const timeSlotsContainer = document.querySelector(`#flush-collapse${accordionIndex} .accordion-body`);
+                timeSlotsContainer.innerHTML = ''; // Nettoyez d'abord le container
+
+                // Affichez chaque créneau disponible
+                timeSlots.forEach(slot => {
+                    const slotButton = document.createElement('button');
+                    slotButton.textContent = slot;
+                    slotButton.className = ' time-slot btn m-1';
+                    // Ajoutez ici la logique pour réserver le créneau lors du clic sur le bouton
+                    slotButton.addEventListener('click', function() {
+                        selectedDate = new Date(date + 'T' + slot);
+                        bookingDate = date;
+                        selectedTime = slot;
+
+
+                        if (userIsLoggedIn()) {
+                            document.getElementById('bookingDateFormated').textContent = new Date(date + 'T' + slot).toLocaleDateString('fr-FR', {
+                                day: 'numeric',
+                                month: 'long',
+                                year: 'numeric'
+                            });
+                            document.getElementById('bookingTime').textContent = slot;
+                            document.getElementById('serviceDuration').textContent = convertDuration(serviceDuration);
+                            document.getElementById('serviceName').textContent = selectedServiceName;
+                            bookingModal.show();
+                        } else {
+                            localStorage.setItem('selectedServiceDuration', serviceDuration);
+                            localStorage.setItem('selectedServiceName', selectedServiceName);
+                            localStorage.setItem('selectedService', selectedService);
+                            localStorage.setItem('selectedDateFormated', date);
+                            localStorage.setItem('selectedDate', date);
+                            localStorage.setItem('selectedTime', slot);
+                            window.location.href = `/login?redirect=app_booking`;
+                        }
+                    });
+                    timeSlotsContainer.appendChild(slotButton);
+                });
+
+                if(timeSlots.length === 0) {
+                    timeSlotsContainer.innerHTML = '<p>Aucun créneau disponible</p>';
+                }
             })
             .catch(error => {
                 console.error('Erreur lors de la récupération des données:', error);
             });
     }
+
 
     function calculateAvailableTimeSlots(openingHours, absences, bookings, selectedDate) {
         /**
@@ -144,47 +195,6 @@ document.addEventListener('DOMContentLoaded', function() {
         return timeSlots;
     }
 
-
-    function renderTimeSlots(timeSlots, date) {
-        const availableTimesContainer = document.getElementById('availableTimes');
-        availableTimesContainer.innerHTML = '';
-
-        if (timeSlots.length === 0) {
-            availableTimesContainer.innerHTML = '<p>Aucunes disponibilités pour ce jour</p>';
-        } else {
-            timeSlots.forEach(slot => {
-                const timeSlotButton = document.createElement('button');
-                timeSlotButton.className = 'time-slot btn m-1';
-                timeSlotButton.textContent = slot;
-
-                timeSlotButton.addEventListener('click', function() {
-                    selectedDate = new Date(date + 'T' + slot);
-                    bookingDate = date;
-                    selectedTime = slot;
-                    if (userIsLoggedIn()) {
-                        const durationInHoursAndMinutes = convertDuration(selectedServiceDuration);
-                        // Afficher la modale avec les informations préremplies
-                        const formattedDate = selectedDate.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' });
-
-                        document.getElementById('bookingDateFormated').textContent = selectedDate.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' });
-                        document.getElementById('bookingTime').textContent = selectedTime;
-                        document.getElementById('serviceDuration').textContent = durationInHoursAndMinutes;
-                        document.getElementById('serviceName').textContent = selectedServiceName;
-                        bookingModal.show();
-                    } else {
-                        localStorage.setItem('selectedServiceDuration', selectedServiceDuration);
-                        localStorage.setItem('selectedServiceName', selectedServiceName);
-                        localStorage.setItem('selectedService', selectedService);
-                        localStorage.setItem('selectedDateFormated', selectedDate);
-                        localStorage.setItem('selectedDate', bookingDate);
-                        localStorage.setItem('selectedTime', selectedTime);
-                        window.location.href = `/login?redirect=app_booking`;
-                    }
-                });
-                availableTimesContainer.appendChild(timeSlotButton);
-            });
-        }
-    }
     if (localStorage.getItem('selectedService') && userIsLoggedIn()) {
         selectedServiceDuration = localStorage.getItem('selectedServiceDuration');
         selectedServiceName = localStorage.getItem('selectedServiceName');
