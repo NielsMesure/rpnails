@@ -85,7 +85,10 @@ select:-webkit-autofill {
     color: white !important; /* Blanc */
 
 }
-
+.prestation-selected {
+    background-color: #9f9f9f !important; /* Ou toute autre couleur qui se démarque */
+    border: 2px solid #9f9f9f; /* Couleur de bord pour indication */
+}
 .custom-submit {
     color: #ffffff;
     background-color: #8a8a8a;

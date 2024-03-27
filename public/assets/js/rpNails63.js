@@ -9,7 +9,35 @@ document.addEventListener('DOMContentLoaded', function() {
     let bookingDate;
     let selectedTime;
 
+    const prestationsButtons = document.querySelectorAll('.prestation-btn');
 
+    prestationsButtons.forEach(button => {
+        button.setAttribute('data-original-text', button.textContent);
+    });
+    prestationsButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            // Réinitialisez tous les boutons à leur texte original et retirez la classe de sélection
+            prestationsButtons.forEach(btn => {
+                btn.textContent = btn.getAttribute('data-original-text');
+                btn.classList.remove('prestation-selected');
+            });
+
+            // Mettez à jour le bouton cliqué pour indiquer "Sélectionné" et ajoutez la classe de sélection
+            this.textContent = "Sélectionné";
+            this.classList.add('prestation-selected');
+
+            // Mettez à jour les variables et l'affichage comme avant
+            selectedServiceDuration = this.dataset.duration;
+            selectedService = this.dataset.id;
+            selectedServiceName = this.dataset.name;
+
+            const scrollAnchor = document.getElementById('scroll-anchor');
+            scrollAnchor.style.marginBottom = '-50vh';
+            scrollAnchor.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+            fillDateContainer(selectedServiceDuration);
+        });
+    });
     document.querySelectorAll('.prestation-btn').forEach(button => {
         button.addEventListener('click', function() {
             selectedServiceDuration = this.getAttribute('data-duration'); // Stockez la durée de la prestation pour l'utiliser lors du calcul des créneaux disponibles
