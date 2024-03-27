@@ -93,7 +93,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 timeSlots.forEach(slot => {
                     const slotButton = document.createElement('button');
                     slotButton.textContent = slot;
-                    slotButton.className = ' time-slot btn m-1';
+                    slotButton.className = 'time-slot btn m-1';
                     // Ajoutez ici la logique pour réserver le créneau lors du clic sur le bouton
                     slotButton.addEventListener('click', function() {
                         selectedDate = new Date(date + 'T' + slot);

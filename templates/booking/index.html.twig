@@ -16,7 +16,7 @@
                                     <!-- Nom de la prestation -->
                                     <h5 class="m-0">{{ prestation.name }}</h5>
                                     <!-- Durée et Prix en dessous du nom -->
-                                    <div class="d-flex justify-content-start align-items-center">
+                                    <div class="d-flex justify-content-start align-items-center ">
                                         {% set hours = (prestation.duration // 60) %}
                                         {% set minutes = (prestation.duration % 60) %}
                                         <span class="text ">{{ prestation.price }}€</span>
