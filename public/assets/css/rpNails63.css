@@ -252,7 +252,7 @@ details[open] .select:after {
 .day-schedule {
     margin-bottom: 1rem;
     padding: 1rem;
-    box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+    box-shadow: rgba(0, 0, 0, 0.24) 0 3px 8px;
     border-radius: 4px;
 }
 
@@ -342,7 +342,7 @@ details[open] .select:after {
 .pushable {
     position: relative;
     background: transparent;
-    padding: 0px;
+    padding: 0;
     border: none;
     cursor: pointer;
     outline-offset: 4px;
