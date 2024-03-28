@@ -254,7 +254,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function userIsLoggedIn() {
-        return document.cookie.split('; ').some((item) => item.trim().startsWith('isLoggedIn=true'));
+        return App.user.isLoggedIn && App.user.isUser;
     }
 
     bookingForm.addEventListener('submit', function(e) {

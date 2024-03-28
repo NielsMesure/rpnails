@@ -14,7 +14,13 @@
     <script src="https://code.jquery.com/jquery-3.6.3.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
 </head>
-
+<script>
+    var App = App || {};
+    App.user = {
+        isLoggedIn: {{ app.user ? 'true' : 'false' }},
+        isUser: {{ is_granted('ROLE_USER') ? 'true' : 'false' }}
+    };
+</script>
 
 <body>
     <header >
