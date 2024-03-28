@@ -85,7 +85,10 @@ select:-webkit-autofill {
     color: white !important; /* Blanc */
 
 }
-
+.prestation-selected {
+    background-color: #9f9f9f !important; /* Ou toute autre couleur qui se démarque */
+    border: 2px solid #9f9f9f; /* Couleur de bord pour indication */
+}
 .custom-submit {
     color: #ffffff;
     background-color: #8a8a8a;
@@ -249,7 +252,7 @@ details[open] .select:after {
 .day-schedule {
     margin-bottom: 1rem;
     padding: 1rem;
-    box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+    box-shadow: rgba(0, 0, 0, 0.24) 0 3px 8px;
     border-radius: 4px;
 }
 
@@ -327,38 +330,19 @@ details[open] .select:after {
 /*
 --------------------------------------------page booking------------------------------------------------
  */
-#prevWeek{
-    background-color: transparent;
-    border: none;
-    color: white;
-}
 
-#prevWeek:disabled{
-    background-color: transparent;
-    border: none;
-    color: #777777;
+.accordion-item {
+    border-radius: 10px!important;
+    margin-bottom: 15px;
+    box-shadow: 0 5px 5px rgba(0, 0, 0, 0.58);
+    overflow: hidden; /* Assure que les coins arrondis restent visibles lors de l'expansion */
 }
 
 
-#nextWeek{
-    background-color: transparent;
-    border: none;
-    color: white;
-}
-
-#nextWeek:disabled{
-    background-color: transparent;
-    border: none;
-    color: #777777;
-}
-
-#prestations{
-    text-align: center;
-}
 .pushable {
     position: relative;
     background: transparent;
-    padding: 0px;
+    padding: 0;
     border: none;
     cursor: pointer;
     outline-offset: 4px;
@@ -465,10 +449,10 @@ details[open] .select:after {
 
 .time-slot {
     margin: 5px;
-    padding: 10px;
-    color: white;
-    background-color: #757575;
-    border: 1px solid #757575;
+    padding: 5px 15px;
+    color: black;
+    background-color: #e5e5e5;
+
     border-radius: 10px;
     cursor: pointer;
     flex-wrap: wrap;
