@@ -2,6 +2,32 @@
 
 
 {% block content %}
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('.delete-booking').forEach(button => {
+                button.addEventListener('click', (e) => {
+                    const bookingId = e.target.getAttribute('data-id');
+                    if (confirm('Êtes-vous sûr de vouloir supprimer cette réservation ?')) {
+                        fetch(`/delete-booking/${bookingId}`, {
+                            method: 'DELETE'
+                        })
+                            .then(response => response.json())
+                            .then(data => {
+                                if (data.status === 'success') {
+                                    location.reload(); // Recharge la page ou ajustez selon votre besoin
+                                } else {
+                                    alert('Erreur lors de la suppression de la réservation.');
+                                }
+                            })
+                            .catch(error => {
+                                console.error('Erreur:', error);
+                                alert('Erreur lors de la communication avec le serveur.');
+                            });
+                    }
+                });
+            });
+        });
+    </script>
 
         {# Déterminer la date et l'heure actuelles #}
         {% set now = "now"|date('Y-m-d H:i', 'Europe/Paris') %}
@@ -43,6 +69,7 @@
                                     </div>
                                     <div class="col-12 col-sm-2">
                                         <p class="mb-0 text-black">{{ booking.date | date('d F Y', 'Europe/Paris') | format_date(locale='fr') }}</p>
+                                        <button class="btn btn-danger delete-booking" data-id="{{ booking.id }}">Supprimer</button>
 
 
                                     </div>

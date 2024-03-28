@@ -20,6 +20,16 @@ use Symfony\Component\Routing\Annotation\Route;
 class BookingController extends AbstractController
 {
 
+    #[Route('/reserver', name: 'app_booking')]
+    public function index(PrestationsRepository $prestationsRepository): Response
+    {
+        $prestations = $prestationsRepository->findAll();
+
+        return $this->render('booking/index.html.twig', [
+            'prestations' => $prestations,
+        ]);
+    }
+
     /**
      * @throws Exception
      */
@@ -59,16 +69,19 @@ class BookingController extends AbstractController
 
 
 
-    #[Route('/reserver', name: 'app_booking')]
-    public function index(PrestationsRepository $prestationsRepository): Response
-    {
-        $prestations = $prestationsRepository->findAll();
+    #[Route('/delete-booking/{id}', name: 'delete_booking', methods: ['DELETE'])]
+    public function deleteBooking(int $id, EntityManagerInterface $entityManager): JsonResponse {
+        $booking = $entityManager->getRepository(Booking::class)->find($id);
 
-        return $this->render('booking/index.html.twig', [
-            'prestations' => $prestations,
-        ]);
+        if ($booking) {
+            $entityManager->remove($booking);
+            $entityManager->flush();
+
+            return new JsonResponse(['status' => 'success']);
+        }
+
+        return new JsonResponse(['status' => 'error', 'message' => 'Réservation non trouvée'], 404);
     }
-    // src/Controller/ReservationController.php
 
 
     /**
